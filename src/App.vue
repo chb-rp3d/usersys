@@ -2,7 +2,8 @@
 </script>
 
 <template>
-  app-hello
+  <!--通过router-view把组件加载进来-->
+  <router-view></router-view>
 </template>
 
 <style scoped>
