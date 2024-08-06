@@ -2,22 +2,20 @@ import { GetEmailDomain } from '@/api/global'
 import { ModifyPwd } from '@/api/user'
 
 export async function handleModifyPwd(emailParams, params) {
-  console.log(`%c>> $emailParamsemailParams`, 'color:yellow', emailParams)
   const { code, data } = await GetEmailDomain(emailParams)
   if (code === 200 && data) {
-    handleFetchModifyPwd(params)
+    handleFetchModifyPwd(params, `https:${data.domain}`)
   }
 }
 
-export async function handleFetchModifyPwd(params) {
+export async function handleFetchModifyPwd(params, domain) {
   const { code, data } = await ModifyPwd(params, {
-    _baseURL: 'https://api.github.com'
+    // _baseURL: domain // TODO: 提测放开
   })
   console.log(`%c>> $ModifyPwd`, 'color:yellow', data)
 
+  // TODO: 修改完密码之后是直接更新token，用户什么都感受不到，还是清空登录状态，重新登陆
   // if (code === 200 && data) {
-  //   setCookie(ACCESS_TOKEN, data.accessToken)
-  //   setCookie(REFRESH_TOKEN, data.refreshToken)
   //   ElMessage({
   //     showClose: true,
   //     message: t('login.login.success'),

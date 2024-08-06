@@ -8,7 +8,7 @@ import router from '@/router'
 import { GetImgCaptcha, GetEmailCode, RegisterByEmail, LoginByToken, RefreshToken } from '@/api/auth'
 import { Unregister } from '@/api/user'
 import { GetArea } from '@/api/global'
-import { string2Base64, deleteCookie, getCookie } from '@/utils/methods'
+import { string2Base64, deleteCookie, getCookie, setCookie } from '@/utils/methods'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
@@ -16,7 +16,7 @@ export const HASH_LOGIN = 'login'
 export const HASH_REGISTER = 'register'
 export const HASH_FORGET_PWD = 'forgetPwd'
 import { useDomainStore } from '@/store/modules/domain'
-const domainStore = useDomainStore()
+import { useUserStore } from '@/store/modules/user'
 
 // login | register | forgetPwd
 export const formType = ref(HASH_REGISTER)
@@ -25,24 +25,29 @@ export const handleHashChange = (hash) => {
   router.push(`/login#${hash}`)
 }
 
-onMounted(() => {
-  // 初始化时根据 hash 设置当前表单
-  formType.value = getFormFromHash(router.currentRoute.value.hash)
-})
-
-watch([() => router.currentRoute.value.hash, () => domainStore.domain], ([newHash, nesDomain]) => {
-  // 监听路由变化，更新当前表单
-  console.log(`%c>> newHash, nesDomain`, 'color:yellow', newHash, nesDomain)
-  if (nesDomain) {
-    formType.value = getFormFromHash(newHash)
-    if (newHash === `#${HASH_REGISTER}` && AreaOptions.value.length === 0) {
-      getGetArea()
+export function useLoginFormSetup() {
+  const domainStore = useDomainStore()
+  onMounted(() => {
+    // 初始化时根据 hash 设置当前表单
+    formType.value = getFormFromHash(router.currentRoute.value.hash)
+  })
+  
+  watch([() => router.currentRoute.value.hash, () => domainStore.domain], ([newHash, newDomain]) => {
+    // 监听路由变化，更新当前表单
+    console.log(`%c>> newHash, newDomain`, 'color:yellow', newHash, newDomain)
+    if (newDomain) {
+      formType.value = getFormFromHash(newHash)
+      if (newHash === `#${HASH_REGISTER}` && AreaOptions.value.length === 0) {
+        getGetArea()
+      }
+      if (['#register', '#forgetPwd'].indexOf(newHash) > -1) {
+        getImgCaptchaUrl()
+      }
     }
-    if (['#register', '#forgetPwd'].indexOf(newHash) > -1) {
-      getImgCaptchaUrl()
-    }
-  }
-})
+  },{
+    immediate: true
+  })
+}
 
 const getFormFromHash = (hash) => {
   switch (hash) {
@@ -116,6 +121,13 @@ export const submitForm = async (formEl, callback) => {
 export const resetForm = (formEl) => {
   if (!formEl) return
   formEl.resetFields()
+}
+
+export function setLoginCache(dataToken) {
+  const domainStore = useUserStore()
+  setCookie(ACCESS_TOKEN, dataToken.accessToken)
+  setCookie(REFRESH_TOKEN, dataToken.refreshToken)
+  domainStore.toggleLoginStatus(true)
 }
 
 export const useLogout = () => {

@@ -121,6 +121,8 @@ const handleRegisterByEmail = async () => {
   if (code === 200 && data) {
     setCookie(ACCESS_TOKEN, data.accessToken)
     setCookie(REFRESH_TOKEN, data.refreshToken)
+    // setLoginCache(data)
+    // TODO: 直接登录还是重新输密码登录
     ElMessage({
       showClose: true,
       message: '注册成功',

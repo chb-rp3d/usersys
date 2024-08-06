@@ -26,7 +26,10 @@ import {
   formType,
   handleFormType,
   useLoginByToken,
+  useLoginFormSetup,
 } from '@/hooks/auth/useLoginForm'
+
+useLoginFormSetup()
 
 // a computed ref
 const titleCfg = {

@@ -54,6 +54,7 @@ import { LoginByEmail } from '@/api/auth/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
+import { setLoginCache } from '@/hooks/auth/useLoginForm'
 
 import { submitForm } from '@/hooks/auth/useLoginForm'
 const emit = defineEmits(['change-form-type']);
@@ -113,17 +114,16 @@ const handleLogin = async () => {
     email: string2Base64(loginForm.email),
     password: string2Base64(loginForm.password)
   }
-  const { code, data } = await LoginByEmail(params, {msgType: 'success'})
+  const { code, data } = await LoginByEmail(params)
   // 携带 accessToken 去请求 第一个接口 
   console.log('denglu 成功', data)
   if (code === 200 && data) {
-    if(isKeepPwd.value) {
+    if (isKeepPwd.value) {
       // TODO: 保存密码
 
     }
-    setCookie(ACCESS_TOKEN, data.accessToken)
-    setCookie(REFRESH_TOKEN, data.refreshToken)
-    router.replace('/index')
+    setLoginCache(data)
+    router.replace('/')
     ElMessage({
       showClose: true,
       message: t('login.login.success'),

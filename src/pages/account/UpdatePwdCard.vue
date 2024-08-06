@@ -1,5 +1,4 @@
 <template>
-  ???
   <el-button @click="emit('change-card-type', 'main');">返回</el-button>
   <el-form :model="updatePwdForm" ref="updatePwdFormRef" :rules="updatePwdFormRules" style="max-width: 500px;">
     <el-form-item required prop="oldPassword">
@@ -35,7 +34,6 @@ import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
 import { submitForm } from '@/hooks/auth/useLoginForm'
-import { setCookie } from '@/utils/methods'
 import { handleModifyPwd } from '@/hooks/account/useAccount'
 import { useUserStore } from '@/store/modules/user'
 const userStore = useUserStore()
@@ -46,8 +44,8 @@ const { t } = useI18n()
 
 const updatePwdForm = reactive({
   oldPassword: 'Aa123456',
-  newPassword1: 'Aaa123456',
-  newPassword2: 'Aaa123456',
+  newPassword1: 'Aa123456',
+  newPassword2: 'Aa123456',
 })
 // 表单校验规则(只要指定prop和添加required即可校验 但要自定义校验需要rules)
 const updatePwdFormRules = reactive({
@@ -100,7 +98,6 @@ const _handleModifyPwd = async () => {
 
 // 表单校验和提交
 const handleSubmitForm = async (formEl) => {
-
   submitForm(formEl, _handleModifyPwd)
 }
 

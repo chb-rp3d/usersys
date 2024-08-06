@@ -30,10 +30,18 @@ const instance = axios.create({
   }
 })
 
+// 请求拦截器
 instance.interceptors.request.use(
   (config) => {
     // 在发送请求之前做一些操作，例如添加请求头、处理请求参数等
     // TODO: 加一个token刷新逻辑
+
+    // 更新baseUrl
+    if (!!config?._baseURL) {
+      config.baseURL = config?._baseURL
+      delete config._baseURL
+    }
+
     console.log(`%c>> $请求拦截器-${config?.url}`, 'color:yellow', config)
     let requireToken = true
     if (config.requireToken === false) {
@@ -43,11 +51,6 @@ instance.interceptors.request.use(
       const token = getToken()
       config.headers['Authorization'] = `Bearer ${token}`
     }
-
-    // 更新baseUrl
-    if(!!console._baseURL) {
-      config.baseURL = console._baseURL
-    }
     return config
   },
   (error) => {
@@ -56,13 +59,14 @@ instance.interceptors.request.use(
   }
 )
 
+// 相应拦截器
 instance.interceptors.response.use(
   (response) => {
     // 对响应数据进行处理，例如解析数据、处理应状态码等
     // 正确和错误分别怎么处理，超时提示等
     const { config = {}, status, statusText, data } = response
     // * 默认提示错误信息
-    const { withoutMsg = false, msgType = 'warning' } = config
+    const { withoutMsg = false, msgType = 'error' } = config
     // 请求成功（与后端通信成功，但接口逻辑不一定正确，分别处理） && statusText === 'OK' ？？？
     const hasSuccess = status === 200 && data && Reflect.has(data, 'code')
     if (hasSuccess) {
@@ -72,9 +76,9 @@ instance.interceptors.response.use(
           console.log(`%c>> $??data.code!!!!`, 'color:yellow', config.url, GET_IP_URL, data.data.domain)
           setBaseURL(data.data.domain)
         }
-        if (withoutMsg != true) {
-          openVn({ msg: `${config.url}请求成功`, type: 'success' })
-        }
+        // if (withSuccessMsg == true) {
+        //   openVn({ msg: `${config.url}请求成功`, type: 'success' })
+        // }
       } else {
         const errMsg = ERROR_CODE_ENUM[data.code]
         if (withoutMsg != true && errMsg) {
