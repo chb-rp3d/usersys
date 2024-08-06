@@ -5,9 +5,9 @@
         <h3 class="login-title">{{ formTitle }}</h3>
 
         <!-- <Transition name="slide-right-left"> </Transition>-->
-        <LoginForm v-show="formType === 'login'" @change-form-type="handleFormType" />
-        <RegisterForm v-show="formType === 'register'" @change-form-type="handleFormType" />
-        <ForgetPasswordForm v-show="formType === 'forgetPwd'" @change-form-type="handleFormType" />
+        <LoginForm v-show="formType === HASH_LOGIN" @change-form-type="handleFormType" />
+        <RegisterForm v-show="formType === HASH_REGISTER" @change-form-type="handleFormType" />
+        <ForgetPasswordForm v-show="formType === HASH_FORGET_PWD" @change-form-type="handleFormType" />
       </div>
     </div>
   </div>
@@ -19,8 +19,14 @@ import LoginForm from './components/LoginForm.vue'
 import RegisterForm from './components/RegisterForm.vue'
 import ForgetPasswordForm from './components/ForgetPasswordForm.vue'
 
-import useLoginForm from '@/hooks/auth/useLoginForm'
-const { formType, handleFormType } = useLoginForm()
+import {
+  HASH_LOGIN,
+  HASH_REGISTER,
+  HASH_FORGET_PWD,
+  formType,
+  handleFormType,
+  useLoginByToken,
+} from '@/hooks/auth/useLoginForm'
 
 // a computed ref
 const titleCfg = {
@@ -33,7 +39,7 @@ const formTitle = computed(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 html,
 body {
   overflow-x: hidden;
@@ -80,7 +86,16 @@ body {
 
 :deep(.el-form-item__nowrap .el-form-item__content) {
   flex-wrap: nowrap;
+  gap: 8px;
+
+  .img-captcha-wrap {
+    img {
+      cursor: pointer;
+      display: block
+    }
+  }
 }
+
 
 .slide-right-left-enter-active,
 .slide-right-left-leave-active {

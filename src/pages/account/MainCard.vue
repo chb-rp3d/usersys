@@ -17,6 +17,9 @@
 import { reactive, toRefs, onActivated } from "vue"
 import { useI18n } from 'vue-i18n'
 import { ElDivider } from "element-plus";
+import { ElMessageBox } from 'element-plus'
+import { REG_PWD } from "@/config/reg";
+import { handleDeleteAccountConform } from "@/hooks/auth/useLoginForm";
 
 const emit = defineEmits(['change-card-type']);
 
@@ -38,7 +41,33 @@ const menuCfg = [
 const _handleCardType = (type) => {
   if (type === 'updatePwd') {
     emit('change-card-type', 'updatePwd');
+    return
   }
+  if (type === 'delAccount') {
+    handleDelAccount()
+    return
+  }
+}
+
+// 注销
+const handleDelAccount = async () => {
+  // 弹窗确认
+  ElMessageBox.prompt('Please input your password', '注销账号', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    inputPattern: REG_PWD,
+    inputErrorMessage: 'Invalid password',
+  })
+    .then(({ value }) => {
+      console.log(`%c>> $`, 'color:yellow', value)
+      handleDeleteAccountConform(value)
+    })
+    .catch(() => {
+      // ElMessage({
+      //   type: 'info',
+      //   message: 'Input canceled',
+      // })
+    })
 }
 
 </script>

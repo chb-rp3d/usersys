@@ -18,7 +18,7 @@
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
         <el-button type="primary" @click="handleSubmitForm(updatePwdFormRef)"> {{
-          $t('login.common.btn_login') }} </el-button>
+          $t('login.common.btn_login确认') }} </el-button>
       </div>
     </el-form-item>
   </el-form>
@@ -34,9 +34,12 @@ import { ModifyPwd } from '@/api/user/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
-import useLoginForm from '@/hooks/auth/useLoginForm'
-import { setCookie } from '../../utils/methods'
-const { submitForm } = useLoginForm()
+import { submitForm } from '@/hooks/auth/useLoginForm'
+import { setCookie } from '@/utils/methods'
+import { handleModifyPwd } from '@/hooks/account/useAccount'
+import { useUserStore } from '@/store/modules/user'
+const userStore = useUserStore()
+
 const emit = defineEmits(['change-card-type']);
 
 const { t } = useI18n()
@@ -85,37 +88,20 @@ const updatePwdFormRules = reactive({
 // 获取loginForm的实例
 const updatePwdFormRef = ref()
 
-const handleModifyPwd = async () => {
-
+const _handleModifyPwd = async () => {
   const params = {
     oldPassword: string2Base64(updatePwdForm.oldPassword),
     newPassword: string2Base64(updatePwdForm.newPassword2)
   }
-  const { code, data } = await ModifyPwd(params)
-  // TODO: 成功之后是重新登录 还是静默登录
-  console.log('denglu 成功', data)
-  if (code === 200 && data) {
-    setCookie(ACCESS_TOKEN, data.accessToken)
-    setCookie(REFRESH_TOKEN, data.refreshToken)
-    ElMessage({
-      showClose: true,
-      message: t('login.login.success'),
-      type: 'success'
-    })
-    // router.replace('/Index')
-  } else {
-    ElMessage({
-      showClose: true,
-      message: t('login.login.failed'),
-      type: 'error'
-    })
-  }
+  handleModifyPwd({
+    email: string2Base64('chenhaibin@revopoint3d.com')
+  }, params)
 }
 
 // 表单校验和提交
 const handleSubmitForm = async (formEl) => {
 
-  submitForm(formEl, handleModifyPwd)
+  submitForm(formEl, _handleModifyPwd)
 }
 
 </script>

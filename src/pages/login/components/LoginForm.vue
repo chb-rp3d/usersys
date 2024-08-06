@@ -12,8 +12,6 @@
         }}</el-button>
     </el-form-item>
 
-
-
     <el-form-item required>
       <el-checkbox v-model="isKeepPwd">
         <span style="font-size: 12px">{{ $t('login.login.keep_pwd') }}</span>
@@ -57,8 +55,7 @@ import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
-import useLoginForm from '@/hooks/auth/useLoginForm'
-const { submitForm } = useLoginForm()
+import { submitForm } from '@/hooks/auth/useLoginForm'
 const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
@@ -116,7 +113,7 @@ const handleLogin = async () => {
     email: string2Base64(loginForm.email),
     password: string2Base64(loginForm.password)
   }
-  const { code, data } = await LoginByEmail(params)
+  const { code, data } = await LoginByEmail(params, {msgType: 'success'})
   // 携带 accessToken 去请求 第一个接口 
   console.log('denglu 成功', data)
   if (code === 200 && data) {
@@ -133,11 +130,11 @@ const handleLogin = async () => {
       type: 'success'
     })
   } else {
-    ElMessage({
-      showClose: true,
-      message: t('login.login.failed'),
-      type: 'error'
-    })
+    // ElMessage({
+    //   showClose: true,
+    //   message: t('login.login.failed'),
+    //   type: 'error'
+    // })
   }
 }
 

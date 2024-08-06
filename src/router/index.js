@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { string2Base64, getCookie } from '@/utils/methods'
+
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
 const routes = [
   {
@@ -44,14 +47,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   console.log(`%c>> $`, 'color:yellow', to)
   const lang = to.query?.lang || 'en'
-  const cookie_token = localStorage.getItem('user-token')
-  const cookie_lang = localStorage.getItem('user-token')
+  const cookie_token = getCookie('ACCESS_TOKEN')
+  const cookie_lang = getCookie('user-token')
   if (lang !== cookie_lang) {
     // 设置语言 lang
   }
 
-  // 如果需要认证且没有 token，则重定向到登录页
-  // TODO: 如果跳转到login，但token有效，跳转到首页
+  // TODO: 如果需要认证且没有 token，则重定向到登录页
+  // TODO: 如果跳转到 /login，但token有效，跳转到首页[通过token登录：LoginByToken]
   if (to.meta.requiresAuth && !token) {
     next('/login')
   } else {

@@ -104,8 +104,3 @@ export function getCookie(name) {
 export function deleteCookie(name) {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
 }
-
-// 使用示例
-setCookie('userLogin', 'true', 30) // 设置一个有效期为30天的 Cookie
-console.log(getCookie('userLogin')) // 获取 Cookie 的值
-deleteCookie('userLogin') // 删除 Cookie

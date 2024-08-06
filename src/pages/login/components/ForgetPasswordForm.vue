@@ -4,14 +4,12 @@
       <el-input v-model="forgetPwdForm.email" :placeholder="$t('login.forgetPassword.placeholder_email')" />
     </el-form-item>
     <el-form-item :label="$t('login.common.label_email_code')" required prop="ticketCode" class="el-form-item__nowrap">
-      <div style="display: flex; justify-content: space-between; width: 100%; gap: 16px;">
         <el-input v-model="forgetPwdForm.ticketCode" :placeholder="$t('login.common.placeholder_pwd')" />
         <el-button @click="_handleGetEmailCode"> {{ $t('login.common.btn_email_code') }} </el-button>
-      </div>
     </el-form-item>
     <el-form-item :label="$t('login.common.label_img_code')" required prop="captchaCode" class="el-form-item__nowrap">
       <el-input v-model="forgetPwdForm.captchaCode" />
-      <div style="cursor: pointer;" @click="getImgCaptchaUrl">
+      <div class="img-captcha-wrap" @click="getImgCaptchaUrl">
         <img :src="imgCaptcha.imgUrl" :alt="$t('login.common.label_img_code')" />
       </div>
     </el-form-item>
@@ -53,13 +51,11 @@ import { useI18n } from 'vue-i18n'
 import { ResetPwd } from '@/api/user/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
 
-import useLoginForm from '@/hooks/auth/useLoginForm'
-const {
+import {
   handleGetEmailCode,
   submitForm,
-  getImgCaptchaUrl,
   imgCaptcha
-} = useLoginForm()
+} from '@/hooks/auth/useLoginForm'
 
 const emit = defineEmits(['change-form-type']);
 
@@ -125,12 +121,6 @@ const handleRegisterByEmail = async () => {
   }
   const res = await ResetPwd(params)
 }
-
-
-onMounted(() => {
-  getImgCaptchaUrl()
-})
-
 
 </script>
 

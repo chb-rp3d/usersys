@@ -6,7 +6,8 @@ import api from '../../utils/http.js'
 const API = {
   GetUserInfo: '/user/info',
   ResetPwd: '/user/password/reset',
-  ModifyPwd: '/user/password/modify'
+  ModifyPwd: '/user/password/modify',
+  Unregister: '/user/account/unregister' // 注销
 }
 
 /**
@@ -15,7 +16,7 @@ const API = {
 export function GetUserInfo() {
   return api.get(API.GetUserInfo, {
     // requireToken: true,
-    // withoutMsg: true,
+    withoutMsg: true
     // aaa: true,
     // msgType: true
   })
@@ -38,8 +39,14 @@ export function ResetPwd(params = {}) {
 /**
  * @description: 修改登录密码
  */
-export function ModifyPwd(params = {}) {
-  return api.post(API.ModifyPwd, {
+export function ModifyPwd(params = {}, options = {}) {
+  return api.post(API.ModifyPwd, { ...params }, { ...options })
+}
+/**
+ * @description: 用户注销
+ */
+export function Unregister(params = {}) {
+  return api.post(API.Unregister, {
     ...params
   })
 }

@@ -32,8 +32,11 @@
 
     <el-form-item :label="$t('login.common.label_img_code')" required prop="captchaCode" class="el-form-item__nowrap">
       <el-input v-model="registerForm.captchaCode" />
-      <div style="cursor: pointer;" @click="getImgCaptchaUrl"><img :src="imgCaptcha.imgUrl"
-          :alt="$t('login.common.label_img_code')" /></div>
+      <div class="img-captcha-wrap" @click="getImgCaptchaUrl">
+        <!-- <el-skeleton-item variant="image" style="width: 100px; height: 40px" /> -->
+        <el-skeleton-item v-if="!imgCaptcha.imgUrl" variant="h3" style="width: 100px" />
+        <img v-else :src="imgCaptcha.imgUrl" :alt="$t('login.common.label_img_code')" />
+      </div>
     </el-form-item>
 
     <el-form-item>
@@ -52,13 +55,11 @@ import { ElDivider, ElMessage } from 'element-plus'
 import router from '@/router'
 import { string2Base64, setCookie } from '@/utils/methods'
 
-import { GetArea } from '@/api/global/index.js'
-import { RegisterByEmail } from '@/api/auth/index.js'
+import { RegisterByEmail } from '@/api/auth'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
-import useLoginForm from '@/hooks/auth/useLoginForm'
-const { imgCaptcha, getImgCaptchaUrl, handleGetEmailCode, submitForm } = useLoginForm()
+import { AreaOptions, imgCaptcha, getImgCaptchaUrl, handleGetEmailCode, submitForm } from '@/hooks/auth/useLoginForm'
 
 const emit = defineEmits(['change-form-type']);
 
@@ -103,18 +104,9 @@ const rulesRegisterForm = reactive({
   imgCod: [{ required: true, message: '请输入图形验证码', trigger: 'blur' }]
 })
 
-// 地区
-const AreaOptions = ref([])
-// 获取地区选项
-const getGetArea = async () => {
-  const { data } = await GetArea()
-  console.log(`GetArea`, data)
-  AreaOptions.value = data
-}
-
 // 通过邮箱注册
 const handleRegisterByEmail = async () => {
-  const { email, password, ticketCode, areaCode, captchaCode } = form
+  const { email, password, ticketCode, areaCode, captchaCode } = registerForm
   const params = {
     email: string2Base64(email),
     password: string2Base64(password),
@@ -123,8 +115,8 @@ const handleRegisterByEmail = async () => {
     captchaId: imgCaptcha.captchaId,
     captchaCode
   }
-  const { code, data } = await RegisterByEmail(params)
-  console.log(`%c>> $ res`, 'color:yellow', res)
+  const { code, data } = await RegisterByEmail(params, { msgType: 'success' })
+  console.log(`%c>> $ res`, 'color:yellow', data)
 
   if (code === 200 && data) {
     setCookie(ACCESS_TOKEN, data.accessToken)
@@ -134,13 +126,13 @@ const handleRegisterByEmail = async () => {
       message: '注册成功',
       type: 'success'
     })
-    // router.replace('/Index')
+    router.replace('/index')
   } else {
-    ElMessage({
-      showClose: true,
-      message: '账号密码错误',
-      type: 'error'
-    })
+    // ElMessage({
+    //   showClose: true,
+    //   message: '账号密码错误',
+    //   type: 'error'
+    // })
   }
 }
 
@@ -152,12 +144,6 @@ const _handleGetEmailCode = async () => {
   }
   handleGetEmailCode(params)
 }
-
-onMounted(() => {
-  getImgCaptchaUrl()
-  getGetArea()
-})
-
 
 </script>
 

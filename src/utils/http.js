@@ -6,14 +6,15 @@ import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
 import { getOsType, getToken } from '@/utils/methods.js'
 
 import { ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE } from '@/config/errCodeEnum'
+import { GET_IP_URL } from '@/api/global'
 
-const openVn = ({ type, msg }) => {
+const openVn = ({ type = 'warning', msg }) => {
   ElMessage({
     message: h('p', { style: 'line-height: 1; font-size: 14px' }, [
       h('span', null, msg)
       // h('i', { style: 'color: teal' }, 'VNode'),
     ]),
-    type: 'warning'
+    type
   })
 }
 
@@ -24,7 +25,7 @@ const instance = axios.create({
     'Content-Type': 'application/json',
     'x-revo-software': 'Test',
     'x-revo-software-version': '1.0.0',
-    'x-revo-os-type': 'Windows',
+    'x-revo-os-type': 'Windows', // TODO: getOsType
     'x-revo-os-version': '11'
   }
 })
@@ -33,7 +34,7 @@ instance.interceptors.request.use(
   (config) => {
     // 在发送请求之前做一些操作，例如添加请求头、处理请求参数等
     // TODO: 加一个token刷新逻辑
-    console.log(`%c>> $请求拦截器`, 'color:yellow', config)
+    console.log(`%c>> $请求拦截器-${config?.url}`, 'color:yellow', config)
     let requireToken = true
     if (config.requireToken === false) {
       requireToken = false
@@ -41,6 +42,11 @@ instance.interceptors.request.use(
     if (requireToken) {
       const token = getToken()
       config.headers['Authorization'] = `Bearer ${token}`
+    }
+
+    // 更新baseUrl
+    if(!!console._baseURL) {
+      config.baseURL = console._baseURL
     }
     return config
   },
@@ -56,28 +62,40 @@ instance.interceptors.response.use(
     // 正确和错误分别怎么处理，超时提示等
     const { config = {}, status, statusText, data } = response
     // * 默认提示错误信息
-    const { withoutMsg, msgType = 'warnning' } = config
-    // 请求成功（与后端通信成功，但接口逻辑不一定正确，分别处理）
-    const hasSuccess = status === 200 && statusText === 'OK' && data && Reflect.has(data, 'code')
+    const { withoutMsg = false, msgType = 'warning' } = config
+    // 请求成功（与后端通信成功，但接口逻辑不一定正确，分别处理） && statusText === 'OK' ？？？
+    const hasSuccess = status === 200 && data && Reflect.has(data, 'code')
     if (hasSuccess) {
-      console.log(`响应拦截器错误码整理`, 'color:yellow', response)
-      if (data.code != 200) {
-        const errMsg = ERROR_CODE_ENUM[data.code]
-        if (!withoutMsg && errMsg) {
-          console.log(errMsg)
-          openVn({ msg: errMsg, msgType })
+      console.log(`响应拦截器~~${config.url}`, 'color:yellow', response, data)
+      if (data.code === 200) {
+        if (config.url === GET_IP_URL && data.data?.domain) {
+          console.log(`%c>> $??data.code!!!!`, 'color:yellow', config.url, GET_IP_URL, data.data.domain)
+          setBaseURL(data.data.domain)
+        }
+        if (withoutMsg != true) {
+          openVn({ msg: `${config.url}请求成功`, type: 'success' })
         }
       } else {
-        // token过期重刷
-        if ([ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE].indexOf(data.code) > -1) {
-        }
-        // 104004	TEMP_TOKEN_EXPIRE	临时token不存在或已过期
-        // 104005	REFRESH_TOKEN_EXPIRE	refreshToken不存在或已过期
-        // 是否提示
-        if (!withoutMsg) {
-          openVn({ msg: data.msg || '未知错误', msgType })
+        const errMsg = ERROR_CODE_ENUM[data.code]
+        if (withoutMsg != true && errMsg) {
+          // token过期重刷
+          // 104004	TEMP_TOKEN_EXPIRE	临时token不存在或已过期
+          // 104005	REFRESH_TOKEN_EXPIRE	refreshToken不存在或已过期
+          // 是否提示
+          if ([ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE].indexOf(data.code) > -1) {
+            console.log(`%c>> $`, 'color:yellow', errMsg, '过期重刷')
+          }
+          console.log(errMsg)
+          if (errMsg) {
+            openVn({ msg: errMsg, type: msgType })
+          } else {
+            console.log(`%c>> $未知错误`, 'color:yellow', config.url)
+            openVn({ msg: '未知错误', type: msgType })
+          }
         }
       }
+    } else {
+      console.log(`%c>> $ 响应拦截器-有错的时候`, 'color:yellow', response)
     }
     return response.data
   },
@@ -88,4 +106,13 @@ instance.interceptors.response.use(
   }
 )
 
+// 提供一个方法来设置 baseURL
+export function setBaseURL(domain) {
+  console.log(`%c>> $`, 'color:yellow', domain)
+  // if(domain.indexOf('http') > -1) {
+  //   instance.defaults.baseURL = `${domain}`;
+  // } else {
+  //   instance.defaults.baseURL = `https:${domain}`;
+  // }
+}
 export default instance

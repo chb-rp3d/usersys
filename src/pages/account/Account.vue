@@ -15,9 +15,6 @@ import { useI18n } from 'vue-i18n'
 import MainCard from "./MainCard.vue"
 import UpdatePwdCard from "./UpdatePwdCard.vue"
 
-import useAccount from '@/hooks/auth/useAccount'
-const { cardType } = useAccount()
-
 const myCardType = ref('main')
 const { t } = useI18n()
 const handleMyCardType = (type) => {
