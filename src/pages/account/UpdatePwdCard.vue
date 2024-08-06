@@ -1,4 +1,6 @@
 <template>
+  ???
+  <el-button @click="emit('change-card-type', 'main');">返回</el-button>
   <el-form :model="updatePwdForm" ref="updatePwdFormRef" :rules="updatePwdFormRules" style="max-width: 500px;">
     <el-form-item required prop="oldPassword">
       <el-input v-model="updatePwdForm.oldPassword" type="password" show-password
@@ -33,8 +35,9 @@ import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
 import useLoginForm from '@/hooks/auth/useLoginForm'
+import { setCookie } from '../../utils/methods'
 const { submitForm } = useLoginForm()
-
+const emit = defineEmits(['change-card-type']);
 
 const { t } = useI18n()
 
@@ -92,8 +95,8 @@ const handleModifyPwd = async () => {
   // TODO: 成功之后是重新登录 还是静默登录
   console.log('denglu 成功', data)
   if (code === 200 && data) {
-    sessionStorage.setItem(ACCESS_TOKEN, data.accessToken)
-    sessionStorage.setItem(REFRESH_TOKEN, data.refreshToken)
+    setCookie(ACCESS_TOKEN, data.accessToken)
+    setCookie(REFRESH_TOKEN, data.refreshToken)
     ElMessage({
       showClose: true,
       message: t('login.login.success'),

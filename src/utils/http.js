@@ -5,6 +5,8 @@ import { BASE_URL, PORT } from '@/config/global.js'
 import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
 import { getOsType, getToken } from '@/utils/methods.js'
 
+import { ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE } from '@/config/errCodeEnum'
+
 const openVn = ({ type, msg }) => {
   ElMessage({
     message: h('p', { style: 'line-height: 1; font-size: 14px' }, [
@@ -66,7 +68,15 @@ instance.interceptors.response.use(
           openVn({ msg: errMsg, msgType })
         }
       } else {
+        // token过期重刷
+        if ([ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE].indexOf(data.code) > -1) {
+        }
+        // 104004	TEMP_TOKEN_EXPIRE	临时token不存在或已过期
+        // 104005	REFRESH_TOKEN_EXPIRE	refreshToken不存在或已过期
         // 是否提示
+        if (!withoutMsg) {
+          openVn({ msg: data.msg || '未知错误', msgType })
+        }
       }
     }
     return response.data

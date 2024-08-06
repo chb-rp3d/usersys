@@ -3,16 +3,11 @@
     <div class="loginDiv">
       <div class="login-content">
         <h3 class="login-title">{{ formTitle }}</h3>
-        <div>
-          <el-button @click="handleFormType('login')">login</el-button>
-          <el-button @click="handleFormType('register')">register</el-button>
-          <el-button @click="handleFormType('forgetPwd')">forgetPwd</el-button>
-        </div>
 
         <!-- <Transition name="slide-right-left"> </Transition>-->
-        <LoginForm v-show="formType === 'login'" />
-        <RegisterForm v-show="formType === 'register'" />
-        <ForgetPasswordForm v-show="formType === 'forgetPwd'" />
+        <LoginForm v-show="formType === 'login'" @change-form-type="handleFormType" />
+        <RegisterForm v-show="formType === 'register'" @change-form-type="handleFormType" />
+        <ForgetPasswordForm v-show="formType === 'forgetPwd'" @change-form-type="handleFormType" />
       </div>
     </div>
   </div>
@@ -51,15 +46,17 @@ body {
   background-color: #b3c0d1;
   background-size: 100% 100%;
 
-  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loginDiv {
-  position: absolute;
+  /* position: absolute;
   top: 50%;
   left: 50%;
   margin-top: -300px;
-  margin-left: -225px;
+  margin-left: -225px; */
   width: 450px;
   /* height: -webkit-fill-available; */
   background: #fff;

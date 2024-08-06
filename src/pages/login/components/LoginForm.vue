@@ -8,14 +8,14 @@
         :placeholder="$t('login.common.placeholder_pwd')" />
     </el-form-item>
     <el-form-item required prop="password">
-      <el-button link type="primary" @click="handleFormType('forgetPwd')">{{ $t('login.forgetPassword.title')
+      <el-button link type="primary" @click="emit('change-form-type', 'forgetPwd')">{{ $t('login.forgetPassword.title')
         }}</el-button>
     </el-form-item>
 
 
 
     <el-form-item required>
-      <el-checkbox v-model="isAllowPolicy">
+      <el-checkbox v-model="isKeepPwd">
         <span style="font-size: 12px">{{ $t('login.login.keep_pwd') }}</span>
       </el-checkbox>
     </el-form-item>
@@ -40,7 +40,7 @@
 
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button @click="handleFormType('register')">{{ $t('login.common.btn_register') }}</el-button>
+        <el-button @click="emit('change-form-type', 'register')">{{ $t('login.common.btn_register') }}</el-button>
       </div>
     </el-form-item>
   </el-form>
@@ -51,14 +51,15 @@ import { reactive, ref, unref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
-import { string2Base64 } from '@/utils/methods'
+import { string2Base64, setCookie } from '@/utils/methods'
 import { LoginByEmail } from '@/api/auth/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 import { ClickOutside as vClickOutside } from 'element-plus'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
 import useLoginForm from '@/hooks/auth/useLoginForm'
-const { handleFormType, submitForm } = useLoginForm()
+const { submitForm } = useLoginForm()
+const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
 
@@ -92,6 +93,7 @@ const loginFormRules = reactive({
 
 // 获取loginForm的实例
 const loginFormRef = ref()
+const isKeepPwd = ref(false)
 const isAllowPolicy = ref(false)
 const isAllowRef = ref()
 const allowPOPoRefVisible = ref(false)
@@ -115,16 +117,21 @@ const handleLogin = async () => {
     password: string2Base64(loginForm.password)
   }
   const { code, data } = await LoginByEmail(params)
+  // 携带 accessToken 去请求 第一个接口 
   console.log('denglu 成功', data)
   if (code === 200 && data) {
-    sessionStorage.setItem(ACCESS_TOKEN, data.accessToken)
-    sessionStorage.setItem(REFRESH_TOKEN, data.refreshToken)
+    if(isKeepPwd.value) {
+      // TODO: 保存密码
+
+    }
+    setCookie(ACCESS_TOKEN, data.accessToken)
+    setCookie(REFRESH_TOKEN, data.refreshToken)
+    router.replace('/index')
     ElMessage({
       showClose: true,
       message: t('login.login.success'),
       type: 'success'
     })
-    // router.replace('/Index')
   } else {
     ElMessage({
       showClose: true,

@@ -11,7 +11,6 @@
       </el-header>
 
       <el-main style="height: 100%;">
-        <el-button @click="handleGetUserInfo">获取用户数据</el-button>
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" />
@@ -23,21 +22,10 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import Aside from "./components/Aside.vue";
 import Header from "./components/Header.vue";
 import { reactive, toRefs, onActivated } from "vue"
-import { useUserStore } from '@/store/modules/user'
-import { GetUserInfo } from '@/api/user/index'
-
-const userStore = useUserStore()
-const handleGetUserInfo = async () => {
-  const { code, data } = await GetUserInfo()
-  console.log(`%c>> $data`, 'color:yellow', data)
-  if (code === 200 && data) {
-    userStore.updateUserInfo(data)
-  }
-}
-
 
 const data = reactive({
   isCollapse: false,

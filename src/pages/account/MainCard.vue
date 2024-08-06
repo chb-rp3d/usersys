@@ -18,7 +18,6 @@ import { reactive, toRefs, onActivated } from "vue"
 import { useI18n } from 'vue-i18n'
 import { ElDivider } from "element-plus";
 
-
 const emit = defineEmits(['change-card-type']);
 
 const { t } = useI18n()

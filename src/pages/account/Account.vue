@@ -1,10 +1,11 @@
 <template>
-  <Transition name="slide-right-left">
+  <h2>{{ myCardType }}</h2>
+  <!-- <Transition name="slide-right-left"> -->
     <MainCard v-show="myCardType === 'main'" @change-card-type="handleMyCardType" />
-  </Transition>
-  <Transition name="slide-right-left">
-    <UpdatePwdCard v-show="myCardType === 'updatePwd'" />
-  </Transition>
+  <!-- </Transition> -->
+  <!-- <Transition name="slide-right-left"> -->
+    <UpdatePwdCard v-show="myCardType === 'updatePwd'" @change-card-type="handleMyCardType" />
+  <!-- </Transition> -->
 </template>
 
 <script setup>
@@ -21,8 +22,13 @@ const myCardType = ref('main')
 const { t } = useI18n()
 const handleMyCardType = (type) => {
   if (type === 'updatePwd') {
-    myCardType.value ='updatePwd'
+    myCardType.value = 'updatePwd'
     console.log(`%c>> $父组件接受`, 'color:yellow', type, myCardType.value)
+    return
+  }
+  if (type === 'main') {
+    myCardType.value = 'main'
+    return
   }
 }
 
@@ -40,4 +46,21 @@ const handleMyCardType = (type) => {
   transform: translateX(100%);
   opacity: 0;
 }
+/* .slide-right-left-enter-active {
+  transition: all 0.5s ease;
+}
+
+.slide-right-left-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slide-right-left-leave-active {
+  transition: all 0.5s ease;
+}
+
+.slide-right-left-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+} */
 </style>

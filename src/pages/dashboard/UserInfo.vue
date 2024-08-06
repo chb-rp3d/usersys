@@ -1,30 +1,47 @@
 <template>
-    {{ userInfo }}
     <!-- TODO：loading - 骨架屏 -->
+    <!-- {{ userStore.userInfo }} -->
     <el-card style="max-width: 880px">
-        <el-descriptions :column="1" border>
+        <div v-if="ApiLoading === true">Loading</div>
+        <el-descriptions v-else :column="1" border>
             <el-descriptions-item :label="$t('login.common.label_email')">
-                {{ userInfo.userId }}
+                {{ userStore.userInfo.userId }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('login.common.label_email')">
-                {{ userInfo.areaCode }}
+                {{ userStore.userInfo.areaCode }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('login.common.label_email')">
-                {{ userInfo.email }}
+                {{ userStore.userInfo.email }}
             </el-descriptions-item>
         </el-descriptions>
     </el-card>
 </template>
 
 <script setup>
-import { reactive, toRefs, onActivated } from "vue"
+import { reactive, ref, onActivated, onMounted } from "vue"
 import { useUserStore } from '@/store/modules/user'
 import { useI18n } from 'vue-i18n'
+import { GetUserInfo } from '@/api/user/index'
+
+const ApiLoading = ref(true)
+
+const userStore = useUserStore()
 
 const { t } = useI18n()
+// console.log(`%c>> $userInfo`, 'color:yellow', userInfo)
+const handleGetUserInfo = async () => {
+    ApiLoading.value = true
+    const { code, data } = await GetUserInfo()
+    console.log(`%c>> $data`, 'color:yellow', data)
+    if (code === 200 && data) {
+        userStore.updateUserInfo(data)
+    }
+    ApiLoading.value = false
+}
 
-const { userInfo } = useUserStore()
-
+onMounted(() => {
+    handleGetUserInfo()
+})
 </script>
 
 <style scoped></style>

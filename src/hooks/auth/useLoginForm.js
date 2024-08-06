@@ -4,11 +4,14 @@
 
 import { reactive, ref, onMounted } from 'vue'
 import { GetImgCaptcha, GetEmailCode, RegisterByEmail } from '@/api/auth/index.js'
-import { string2Base64 } from '@/utils/methods'
+import { string2Base64, deleteCookie } from '@/utils/methods'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import router from '@/router'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
 const useLoginForm = () => {
   // login | register | forgetPwd
-  const formType = ref('forgetPwd')
+  const formType = ref('login')
   // 切换表单类型
   const handleFormType = (type) => {
     formType.value = type
@@ -59,6 +62,29 @@ const useLoginForm = () => {
   }
 
   return { formType, handleFormType, imgCaptcha, getImgCaptchaUrl, handleGetEmailCode, submitForm, resetForm }
+}
+export const useLogout = () => {
+  console.log('logout')
+  ElMessageBox.confirm('是否要退出登陆?', 'Warning', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      deleteCookie(ACCESS_TOKEN)
+      deleteCookie(REFRESH_TOKEN)
+      router.replace('/login')
+      ElMessage({
+        type: 'success',
+        message: '退出成功'
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '退出取消'
+      })
+    })
 }
 
 export default useLoginForm

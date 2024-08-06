@@ -31,6 +31,15 @@
         </el-button>
       </div>
     </el-form-item>
+
+    <el-form-item>
+      <div>
+        <el-button link @click="() => emit('change-form-type', 'login')">
+          返回登录
+          {{ $t('login.common.btn_conform 返回登录') }}
+        </el-button>
+      </div>
+    </el-form-item>
   </el-form>
 </template>
 
@@ -51,6 +60,8 @@ const {
   getImgCaptchaUrl,
   imgCaptcha
 } = useLoginForm()
+
+const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
 

@@ -2,7 +2,7 @@
   <el-form :model="registerForm" ref="RegisterFormRef" :rules="rulesRegisterForm" style="padding: 30px">
     <h5>
       {{ $t('login.register.has_account') }}
-      <span @click="() => handleFormType('login')" style="color: blue; cursor: pointer">{{
+      <span @click="() => emit('change-form-type', 'login')" style="color: blue; cursor: pointer">{{
         $t('login.common.btn_login')
       }}</span>
     </h5>
@@ -32,7 +32,8 @@
 
     <el-form-item :label="$t('login.common.label_img_code')" required prop="captchaCode" class="el-form-item__nowrap">
       <el-input v-model="registerForm.captchaCode" />
-      <div style="cursor: pointer;" @click="getImgCaptchaUrl"><img :src="imgCaptcha.imgUrl" :alt="$t('login.common.label_img_code')" /></div>
+      <div style="cursor: pointer;" @click="getImgCaptchaUrl"><img :src="imgCaptcha.imgUrl"
+          :alt="$t('login.common.label_img_code')" /></div>
     </el-form-item>
 
     <el-form-item>
@@ -49,7 +50,7 @@
 import { reactive, ref, onMounted } from 'vue'
 import { ElDivider, ElMessage } from 'element-plus'
 import router from '@/router'
-import { string2Base64 } from '@/utils/methods'
+import { string2Base64, setCookie } from '@/utils/methods'
 
 import { GetArea } from '@/api/global/index.js'
 import { RegisterByEmail } from '@/api/auth/index.js'
@@ -57,7 +58,9 @@ import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
 import useLoginForm from '@/hooks/auth/useLoginForm'
-const { imgCaptcha, handleFormType, getImgCaptchaUrl, handleGetEmailCode, submitForm } = useLoginForm()
+const { imgCaptcha, getImgCaptchaUrl, handleGetEmailCode, submitForm } = useLoginForm()
+
+const emit = defineEmits(['change-form-type']);
 
 // 获取loginForm的实例
 const RegisterFormRef = ref()
@@ -124,8 +127,8 @@ const handleRegisterByEmail = async () => {
   console.log(`%c>> $ res`, 'color:yellow', res)
 
   if (code === 200 && data) {
-    sessionStorage.setItem(ACCESS_TOKEN, data.accessToken)
-    sessionStorage.setItem(REFRESH_TOKEN, data.refreshToken)
+    setCookie(ACCESS_TOKEN, data.accessToken)
+    setCookie(REFRESH_TOKEN, data.refreshToken)
     ElMessage({
       showClose: true,
       message: '注册成功',

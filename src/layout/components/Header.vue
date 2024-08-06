@@ -47,7 +47,8 @@
 <script setup>
 import router from "@/router";
 import avatarIcon  from "@/assets/vue.svg"
-import { useLogout,useUserRef } from "@/hooks/auth/useLog"
+import { useUserRef } from "@/hooks/auth/useLog"
+import { useLogout } from "@/hooks/auth/useLoginForm"
 // 获取用户信息
 const user = useUserRef()
 const props = defineProps({	

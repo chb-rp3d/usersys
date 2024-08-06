@@ -47,26 +47,65 @@ export function getToken(type) {
     console.log(`%c>> $`, 'color:yellow', '请提供token的类别')
     return
   }
-  // 检查 sessionStorage 是否可用
-  if (typeof window !== 'undefined' && window?.sessionStorage) {
-    try {
-      // sessionStorage 获取 token
-      // TODO: 过期重试
-      if (type === 'refreshToken') {
-        const refreshToken = sessionStorage.getItem(REFRESH_TOKEN)
-        return refreshToken
-      } else {
-        const accessToken = sessionStorage.getItem(ACCESS_TOKEN)
-        return accessToken
-      }
-    } catch (error) {
-      // 处理可能出现的错误
-      console.error('Error getting token from sessionStorage:', error)
-      return null
+  // 检查 token 是否可用
+  try {
+    // 获取 token
+    // TODO: 过期重试
+    if (type === 'refreshToken') {
+      const refreshToken = getCookie(REFRESH_TOKEN)
+      return refreshToken
+    } else {
+      const accessToken = getCookie(ACCESS_TOKEN)
+      return accessToken
     }
-  } else {
-    // 如果 sessionStorage 不可用，则返回 null
-    console.warn('sessionStorage is not available.')
+  } catch (error) {
+    // 处理可能出现的错误
+    console.error('Error getting token from cookie:', error)
     return null
   }
 }
+
+/**
+ * 设置Cookie
+ * @param {String} name
+ * @param {String} value
+ * @param {Number} days 失效时间
+ */
+export function setCookie(name, value, days = 30) {
+  console.log(`%c>> $`, 'color:yellow', name, value, days)
+  var expires = ''
+  if (days) {
+    var date = new Date()
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+    expires = '; expires=' + date.toUTCString()
+  }
+  document.cookie = name + '=' + (value || '') + expires + '; path=/'
+}
+/**
+ * 获取Cookie
+ * @param {String} name
+ * @returns
+ */
+
+export function getCookie(name) {
+  var nameEQ = name + '='
+  var ca = document.cookie.split(';')
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i]
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length)
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length)
+  }
+  return null
+}
+/**
+ * 删除Cookie
+ * @param {String} name
+ */
+export function deleteCookie(name) {
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+}
+
+// 使用示例
+setCookie('userLogin', 'true', 30) // 设置一个有效期为30天的 Cookie
+console.log(getCookie('userLogin')) // 获取 Cookie 的值
+deleteCookie('userLogin') // 删除 Cookie

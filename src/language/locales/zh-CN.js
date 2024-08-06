@@ -49,7 +49,7 @@ export default {
       plz_allow_policy: '请先阅读并同意隐私政策',
       success: '登录成功',
       failed: '账号密码错误',
-      keep_pwd: '账号密码错误',
+      keep_pwd: '记住密码',
       forget_pwd: '忘记密码？'
     },
     register: {
