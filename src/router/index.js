@@ -42,12 +42,14 @@ const routes = [
         path: '/Account',
         name: 'account',
         meta: {
-          title: '账号与安全'
+          title: '账号与安全',
+          requiresAuth: true
         },
         component: () => import('@/pages/account/Account.vue')
       }
     ]
-  }
+  },
+  { path: '/:pathMatch(.*)*', component: () => import('@/pages/NotFound.vue') },
 ]
 
 const router = createRouter({
@@ -72,7 +74,7 @@ router.beforeEach((to, from, next) => {
   // TODO: 如果需要认证且没有 token，则重定向到登录页
   // TODO: 如果跳转到 /login，但token有效，跳转到首页[通过token登录：LoginByToken]
   if (to.meta.requiresAuth && !cookie_token) {
-    next('/login')
+    next('/login#login')
   } else {
     next()
   }

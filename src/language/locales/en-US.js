@@ -32,7 +32,7 @@ export default {
     },
     login: {
       title: '账号登录',
-      allow_policy: '已阅读并同意{0}和{1}',
+      allow_policy: 'en en en allow_policy {0}和{1}',
       user_agreement: 'Revopoint用户协议',
       privacy_policy: 'Revopoint隐私政策',
       forget_pwd: '忘记密码？'

@@ -3,6 +3,8 @@
     <div class="loginDiv">
       <div class="login-content">
         <h3 class="login-title">{{ formTitle }}</h3>
+        <el-button @click="toggleLang('en-us')"> en </el-button>
+        <el-button @click="toggleLang('zh-cn')"> cn </el-button>
 
         <!-- <Transition name="slide-right-left"> </Transition>-->
         <LoginForm v-show="formType === HASH_LOGIN" @change-form-type="handleFormType" />
@@ -18,6 +20,7 @@ import { reactive, ref, computed } from 'vue'
 import LoginForm from './components/LoginForm.vue'
 import RegisterForm from './components/RegisterForm.vue'
 import ForgetPasswordForm from './components/ForgetPasswordForm.vue'
+import i18n from '@/language/index'
 
 import {
   HASH_LOGIN,
@@ -30,6 +33,11 @@ import {
 } from '@/hooks/auth/useLoginForm'
 
 useLoginFormSetup()
+
+const toggleLang = (lang) => {
+  console.log(`%c>> $i18n`, 'color:yellow', i18n)
+  i18n.global.locale.value = lang
+}
 
 // a computed ref
 const titleCfg = {
