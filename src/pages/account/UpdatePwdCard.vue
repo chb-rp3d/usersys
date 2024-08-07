@@ -1,23 +1,23 @@
 <template>
-  <el-button @click="emit('change-card-type', 'main');">返回</el-button>
+  <el-button @click="emit('change-card-type', 'main');" style="margin-bottom: 16px;">返回</el-button>
   <el-form :model="updatePwdForm" ref="updatePwdFormRef" :rules="updatePwdFormRules" style="max-width: 500px;">
     <el-form-item required prop="oldPassword">
       <el-input v-model="updatePwdForm.oldPassword" type="password" show-password
-        :placeholder="$t('login.common.旧密码')" />
+        :placeholder="$t('global.placeholder', [$t('account.old_password')])" />
     </el-form-item>
     <el-form-item required prop="newPassword1">
       <el-input v-model="updatePwdForm.newPassword1" type="password" show-password
-        :placeholder="$t('login.common.placeholder_pwd')" />
+        :placeholder="$t('global.placeholder', [$t('account.new_password')])" />
     </el-form-item>
     <el-form-item required prop="newPassword2">
       <el-input v-model="updatePwdForm.newPassword2" type="password" show-password
-        :placeholder="$t('login.common.placeholder_pwd_new')" />
+        :placeholder="$t('account.placeholder_password_again')" />
     </el-form-item>
 
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
         <el-button type="primary" @click="handleSubmitForm(updatePwdFormRef)"> {{
-          $t('login.common.btn_login确认') }} </el-button>
+          $t('global.btn__conform') }} </el-button>
       </div>
     </el-form-item>
   </el-form>
@@ -43,16 +43,16 @@ const emit = defineEmits(['change-card-type']);
 const { t } = useI18n()
 
 const updatePwdForm = reactive({
-  oldPassword: 'Aa123456',
-  newPassword1: 'Aa123456',
-  newPassword2: 'Aa123456',
+  oldPassword: '',
+  newPassword1: '',
+  newPassword2: '',
 })
 // 表单校验规则(只要指定prop和添加required即可校验 但要自定义校验需要rules)
 const updatePwdFormRules = reactive({
   oldPassword: {
     validator: (rule, value, callback) => {
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.valid.必填')))
+        callback(new Error(t('login.tip__password')))
       } else {
         callback()
       }
@@ -62,19 +62,19 @@ const updatePwdFormRules = reactive({
   newPassword1: {
     validator: (rule, value, callback) => {
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.valid.ticket_require')))
+        callback(new Error(t('login.tip__password')))
       } else {
         callback()
       }
     },
     trigger: ['blur', 'change']
   },
-  newPassword1: {
+  newPassword2: {
     validator: (rule, value, callback) => {
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.valid.ticket_require')))
+        callback(new Error(t('login.tip__password')))
       } else if (updatePwdForm.newPassword1 != value) {
-        callback(new Error(t('login.valid.两次密码不一致')))
+        callback(new Error(t('account.valid__pwd_not_same')))
       } else {
         callback()
       }

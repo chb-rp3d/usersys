@@ -28,12 +28,12 @@ const { t } = useI18n()
 const menuCfg = [
   {
     id: 0,
-    name: t('login.login.email-修改密码'),
+    name: t('login.email-修改密码'),
     type: 'updatePwd'
   },
   {
     id: 1,
-    name: t('login.login.title-注销账号'),
+    name: t('login.title-注销账号'),
     type: 'delAccount'
   },
 ]

@@ -10,7 +10,7 @@
         <Header @doCollapse="doCollapse" :icon="icon"></Header>
       </el-header>
 
-      <el-main style="height: 100%;">
+      <el-main style="height: 100%; padding-top: 60px">
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" />

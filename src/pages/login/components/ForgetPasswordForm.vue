@@ -1,31 +1,31 @@
 <template>
   <el-form :model="forgetPwdForm" ref="forgetPwdFormRef" :rules="forgetPwdFormRules" style="padding: 30px">
-    <el-form-item :label="$t('login.common.label_email')" required prop="email">
-      <el-input v-model="forgetPwdForm.email" :placeholder="$t('login.forgetPassword.placeholder_email')" />
+    <el-form-item :label="$t('login.label__email')" required prop="email">
+      <el-input v-model="forgetPwdForm.email" :placeholder="$t('login.placeholder_email')" />
     </el-form-item>
-    <el-form-item :label="$t('login.common.label_email_code')" required prop="ticketCode" class="el-form-item__nowrap">
-        <el-input v-model="forgetPwdForm.ticketCode" :placeholder="$t('login.common.placeholder_pwd')" />
-        <el-button @click="_handleGetEmailCode"> {{ $t('login.common.btn_email_code') }} </el-button>
+    <el-form-item :label="$t('login.label__email_code')" required prop="ticketCode" class="el-form-item__nowrap">
+        <el-input v-model="forgetPwdForm.ticketCode" :placeholder="$t('login.placeholder__pwd')" />
+        <el-button @click="_handleGetEmailCode"> {{ $t('login.btn__email_code') }} </el-button>
     </el-form-item>
-    <el-form-item :label="$t('login.common.label_img_code')" required prop="captchaCode" class="el-form-item__nowrap">
+    <el-form-item :label="$t('login.label__img_code')" required prop="captchaCode" class="el-form-item__nowrap">
       <el-input v-model="forgetPwdForm.captchaCode" />
       <div class="img-captcha-wrap" @click="getImgCaptchaUrl">
-        <img :src="imgCaptcha.imgUrl" :alt="$t('login.common.label_img_code')" />
+        <img :src="imgCaptcha.imgUrl" :alt="$t('login.label__img_code')" />
       </div>
     </el-form-item>
-    <el-form-item :label="$t('login.common.label_password')" required prop="password">
+    <el-form-item :label="$t('login.label__password')" required prop="password">
       <el-input v-model="forgetPwdForm.password" type="password" show-password
-        :placeholder="$t('login.forgetPassword.placeholder_new_pwd')" />
+        :placeholder="$t('login.placeholder__pwd_new')" />
     </el-form-item>
     <el-form-item>
-      <el-button link type="primary" @click="_handleGetEmailCode">{{ $t('login.common.tip_email_code_miss') }}
+      <el-button link type="primary" @click="_handleGetEmailCode">{{ $t('login.tip__email_code_miss') }}
       </el-button>
     </el-form-item>
 
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
         <el-button type="primary" @click="submitForm(forgetPwdFormRef, handleRegisterByEmail)"> {{
-          $t('login.common.btn_conform') }}
+          $t('global.btn__conform') }}
         </el-button>
       </div>
     </el-form-item>
@@ -33,8 +33,7 @@
     <el-form-item>
       <div>
         <el-button link @click="() => emit('change-form-type', 'login')">
-          返回登录
-          {{ $t('login.common.btn_conform 返回登录') }}
+          {{ $t('login.back_to_login') }}
         </el-button>
       </div>
     </el-form-item>
@@ -87,7 +86,7 @@ const forgetPwdFormRules = reactive({
       // console.log(`%c>> $`, 'color:yellow', rule, value)
       // 定义正则表达式
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.login.valid')))
+        callback(new Error(t('login.valid')))
       } else {
         callback()
       }
@@ -95,8 +94,8 @@ const forgetPwdFormRules = reactive({
     trigger: ['blur', 'change']
   },
   ticketCode: [
-    { required: true, message: t('login.valid.ticket_require'), trigger: 'blur' },
-    { min: 6, max: 6, message: t('login.valid.ticket_length_6'), trigger: 'blur' }
+    { required: true, message: t('login.valid__ticket_require'), trigger: 'blur' },
+    { min: 6, max: 6, message: t('login.valid__ticket_length_6'), trigger: 'blur' }
   ],
 })
 

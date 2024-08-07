@@ -3,7 +3,6 @@ export default {
     btn__conform: '确认',
     loading: '加载中...',
     title__backend: 'Revopoint 账号',
-    placeholder: '请输入{0}',
   },
   login: {
     // 注册流程公用
@@ -50,12 +49,6 @@ export default {
     back_to_login: '请重新设置登录密码'
   },
   account: {
-    logout: '退出登录',
-    user_id: '用户id',
-    user_region: '地区',
-    valid__pwd_not_same: '两次密码不一致',
-    old_password: '旧密码',
-    new_password: '新密码',
-    placeholder_password_again: '请再次输入新密码',
+
   }
 }

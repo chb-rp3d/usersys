@@ -31,22 +31,26 @@ export function useLoginFormSetup() {
     // 初始化时根据 hash 设置当前表单
     formType.value = getFormFromHash(router.currentRoute.value.hash)
   })
-  
-  watch([() => router.currentRoute.value.hash, () => domainStore.domain], ([newHash, newDomain]) => {
-    // 监听路由变化，更新当前表单
-    console.log(`%c>> newHash, newDomain`, 'color:yellow', newHash, newDomain)
-    if (newDomain) {
-      formType.value = getFormFromHash(newHash)
-      if (newHash === `#${HASH_REGISTER}` && AreaOptions.value.length === 0) {
-        getGetArea()
+
+  watch(
+    [() => router.currentRoute.value.hash, () => domainStore.domain],
+    ([newHash, newDomain]) => {
+      // 监听路由变化，更新当前表单
+      console.log(`%c>> newHash, newDomain`, 'color:yellow', newHash, newDomain)
+      if (newDomain) {
+        formType.value = getFormFromHash(newHash)
+        if (newHash === `#${HASH_REGISTER}` && AreaOptions.value.length === 0) {
+          getGetArea()
+        }
+        if (['#register', '#forgetPwd'].indexOf(newHash) > -1) {
+          getImgCaptchaUrl()
+        }
       }
-      if (['#register', '#forgetPwd'].indexOf(newHash) > -1) {
-        getImgCaptchaUrl()
-      }
+    },
+    {
+      immediate: true
     }
-  },{
-    immediate: true
-  })
+  )
 }
 
 const getFormFromHash = (hash) => {
@@ -155,14 +159,16 @@ export const useLogout = () => {
 }
 
 // 用token登录
-export const useLoginByToken = async () => {
-  const temporaryToken = getCookie(ACCESS_TOKEN)
-  if (!temporaryToken) {
-    console.log(`%c>> $`, 'color:red', '没有临时token')
-    return
-  }
+export const useLoginByToken = async (temporaryToken) => {
   const { code, data } = await LoginByToken({ temporaryToken })
-  console.log(`%c>> $通过token登录`, 'color:yellow', code, Object.prototype.toString.call(data))
+  if (code === 200 && data) {
+    setLoginCache(data)
+    return 'success'
+    // ElMessage({
+    //   type: 'success',
+    //   message: '登录成功'
+    // })
+  }
 }
 
 // 刷新token

@@ -18,14 +18,14 @@ export async function handleFetchModifyPwd(params, domain) {
   // if (code === 200 && data) {
   //   ElMessage({
   //     showClose: true,
-  //     message: t('login.login.success'),
+  //     message: t('login.success'),
   //     type: 'success'
   //   })
   //   // router.replace('/Index')
   // } else {
   //   ElMessage({
   //     showClose: true,
-  //     message: t('login.login.failed'),
+  //     message: t('login.failed'),
   //     type: 'error'
   //   })
   // }

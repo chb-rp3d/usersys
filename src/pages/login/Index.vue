@@ -3,8 +3,6 @@
     <div class="loginDiv">
       <div class="login-content">
         <h3 class="login-title">{{ formTitle }}</h3>
-        <el-button @click="toggleLang('en-us')"> en </el-button>
-        <el-button @click="toggleLang('zh-cn')"> cn </el-button>
 
         <!-- <Transition name="slide-right-left"> </Transition>-->
         <LoginForm v-show="formType === HASH_LOGIN" @change-form-type="handleFormType" />
@@ -17,10 +15,10 @@
 
 <script setup>
 import { reactive, ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import LoginForm from './components/LoginForm.vue'
 import RegisterForm from './components/RegisterForm.vue'
 import ForgetPasswordForm from './components/ForgetPasswordForm.vue'
-import i18n from '@/language/index'
 
 import {
   HASH_LOGIN,
@@ -28,22 +26,17 @@ import {
   HASH_FORGET_PWD,
   formType,
   handleFormType,
-  useLoginByToken,
   useLoginFormSetup,
 } from '@/hooks/auth/useLoginForm'
+const {t} = useI18n()
 
 useLoginFormSetup()
 
-const toggleLang = (lang) => {
-  console.log(`%c>> $i18n`, 'color:yellow', i18n)
-  i18n.global.locale.value = lang
-}
-
 // a computed ref
 const titleCfg = {
-  login: '登录',
-  register: '注册',
-  forgetPwd: '忘记密码'
+  login: t('login.title__login'),
+  register: t('login.title__register'),
+  forgetPwd: t('login.title__forgetPassword')
 }
 const formTitle = computed(() => {
   return titleCfg[formType.value]

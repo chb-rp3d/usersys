@@ -1,25 +1,26 @@
 <template>
   <el-form :model="loginForm" ref="loginFormRef" :rules="loginFormRules" style="padding: 30px">
     <el-form-item required prop="email">
-      <el-input v-model="loginForm.email" :placeholder="$t('login.common.label_email')" />
+      <el-input v-model="loginForm.email" :placeholder="$t('login.label__email')" />
     </el-form-item>
     <el-form-item required prop="password">
       <el-input v-model="loginForm.password" type="password" show-password
-        :placeholder="$t('login.common.placeholder_pwd')" />
+        :placeholder="$t('login.placeholder__pwd')" />
     </el-form-item>
-    <el-form-item required prop="password">
-      <el-button link type="primary" @click="emit('change-form-type', 'forgetPwd')">{{ $t('login.forgetPassword.title')
+
+    <el-form-item required prop="password" class="form-forgetPwd">
+      <el-button link type="primary" @click="emit('change-form-type', 'forgetPwd')">{{ $t('login.forget_pwd')
         }}</el-button>
     </el-form-item>
 
-    <el-form-item required>
+    <el-form-item required style="margin-bottom: 0;">
       <el-checkbox v-model="isKeepPwd">
-        <span style="font-size: 12px">{{ $t('login.login.keep_pwd') }}</span>
+        <span style="font-size: 12px">{{ $t('login.keep_pwd') }}</span>
       </el-checkbox>
     </el-form-item>
 
     <el-popover ref="isAllowRef" :visible="allowPOPoRefVisible" placement="top" :width="260">
-      <p>{{ $t('login.login.plz_allow_policy') }}</p>
+      <p>{{ $t('login.plz_allow_policy') }}</p>
       <template #reference>
         <el-form-item required>
           <el-checkbox v-model="isAllowPolicy">
@@ -32,13 +33,13 @@
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
         <el-button type="primary" @click="handleSubmitForm(loginFormRef)" v-click-outside="onClickOutside"> {{
-          $t('login.common.btn_login') }} </el-button>
+          $t('login.btn__login') }} </el-button>
       </div>
     </el-form-item>
 
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button @click="emit('change-form-type', 'register')">{{ $t('login.common.btn_register') }}</el-button>
+        <el-button @click="emit('change-form-type', 'register')">{{ $t('login.btn__register') }}</el-button>
       </div>
     </el-form-item>
   </el-form>
@@ -55,11 +56,13 @@ import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 import { setLoginCache } from '@/hooks/auth/useLoginForm'
+import { useGlobalStore } from '@/store/modules/global'
 
 import { submitForm } from '@/hooks/auth/useLoginForm'
 const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
+const GlobalStore = useGlobalStore()
 
 const loginForm = reactive({
   email: 'chenhaibin@revopoint3d.com',
@@ -70,7 +73,7 @@ const loginFormRules = reactive({
   email: {
     validator: (rule, value, callback) => {
       if (!REG_EMAIL.test(value)) {
-        callback(new Error(t('login.valid.email_format')))
+        callback(new Error(t('login.valid__email_format')))
       } else {
         callback()
       }
@@ -80,7 +83,7 @@ const loginFormRules = reactive({
   password: {
     validator: (rule, value, callback) => {
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.valid.ticket_require')))
+        callback(new Error(t('login.valid__ticket_require')))
       } else {
         callback()
       }
@@ -102,9 +105,9 @@ const onClickOutside = () => {
 
 // 隐私政策
 const c__allow_policy = computed(() => {
-  return t('login.login.allow_policy', [
-    `<a href="#">${t('login.login.user_agreement')}</a>`,
-    `<a href="#">${t('login.login.privacy_policy')}</a>`
+  return t('login.allow_policy', [
+    `<a href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a>`,
+    `<a href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a>`
   ])
 })
 
@@ -114,7 +117,7 @@ const handleLogin = async () => {
     email: string2Base64(loginForm.email),
     password: string2Base64(loginForm.password)
   }
-  const { code, data } = await LoginByEmail(params)
+  const { code, data } = await LoginByEmail(params, { msgType: 'success' })
   // 携带 accessToken 去请求 第一个接口 
   console.log('denglu 成功', data)
   if (code === 200 && data) {
@@ -123,16 +126,16 @@ const handleLogin = async () => {
 
     }
     setLoginCache(data)
-    router.replace('/')
+    router.replace('/home')
     ElMessage({
       showClose: true,
-      message: t('login.login.success'),
+      message: t('login.msg__success'),
       type: 'success'
     })
   } else {
     // ElMessage({
     //   showClose: true,
-    //   message: t('login.login.failed'),
+    //   message: t('login.failed'),
     //   type: 'error'
     // })
   }
@@ -151,4 +154,11 @@ const handleSubmitForm = async (formEl) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.form-forgetPwd {
+  margin-bottom: 10px;
+}
+.form-forgetPwd :deep(.el-form-item__content){
+  justify-content: flex-end;
+}
+</style>
