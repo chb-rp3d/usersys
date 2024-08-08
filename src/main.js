@@ -4,6 +4,9 @@ import App from './App.vue'
 import ElementPlus from 'element-plus' // TODO: 按需引用
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/dist/index.css'
+// vite配置了，不用重复引用
+// import '@/assets/styles/light.scss'
+// import '@/assets/styles/dark.scss' 
 
 import router from '@/router/index'
 import vueI18n from '@/language/index'

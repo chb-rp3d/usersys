@@ -6,13 +6,13 @@
 </template>
 
 <script setup>
-import { reactive, ref, toRefs, onActivated, watch } from "vue"
+import { reactive, ref, shallowRef, toRefs, onActivated, watch } from "vue"
 import { useI18n } from 'vue-i18n'
 
 import MainCard from "./MainCard.vue"
 import UpdatePwdCard from "./UpdatePwdCard.vue"
 
-const currentComponent = ref('MainCard');
+const currentComponent = shallowRef(MainCard);
 const myCardType = ref('main')
 const { t } = useI18n()
 
