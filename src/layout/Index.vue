@@ -7,7 +7,7 @@
     <el-container style="height: 100%;">
       <el-header
         style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid;">
-        <Header @doCollapse="doCollapse" :icon="icon"></Header>
+        <Header @doCollapse="doCollapse" :icon="icon">111</Header>
       </el-header>
 
       <el-main style="height: 100%; padding-top: 60px">

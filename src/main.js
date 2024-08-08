@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import ElementPlus from 'element-plus' // TODO: 按需引用
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/dist/index.css'
 
 import router from '@/router/index'
@@ -12,6 +13,9 @@ import store from '@/store/index'
 import { useDomainStore } from '@/store/modules/domain'
 
 const app = createApp(App)
+
+// 设置默认黑暗模式
+// document.documentElement.classList.add('dark');
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)

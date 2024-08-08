@@ -28,7 +28,10 @@ import {
   handleFormType,
   useLoginFormSetup,
 } from '@/hooks/auth/useLoginForm'
-const {t} = useI18n()
+import { useDark, useToggle } from "@vueuse/core";
+const isDark = useDark();
+// const toggleDark = useToggle(isDark);
+const { t } = useI18n()
 
 useLoginFormSetup()
 
@@ -53,7 +56,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: #b3c0d1;
+  background-color: #f5f6f7;
   background-size: 100% 100%;
 
   display: flex;
@@ -69,7 +72,7 @@ body {
   margin-left: -225px; */
   width: 450px;
   /* height: -webkit-fill-available; */
-  background: #fff;
+  // background: #fff;
   border-radius: 1rem;
   opacity: 0.9;
 
@@ -78,6 +81,8 @@ body {
 .login-title {
   margin: 20px 0;
   text-align: center;
+  color: #444444;
+  font-size: 1.5rem;
 }
 
 .login-content {
@@ -98,6 +103,12 @@ body {
       display: block
     }
   }
+}
+:deep(.el-input__inner) {
+  color: #444;
+}
+:deep(.el-input__wrapper) {
+  box-shadow: 0 0 0 1px #ccc inset;
 }
 
 

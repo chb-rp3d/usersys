@@ -6,6 +6,9 @@
         $t('login.btn__login')
       }}</span>
     </h5>
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
     <ElDivider />
 
     <el-form-item :label="$t('login.label__region')" required prop="areaCode">
@@ -69,8 +72,8 @@ const emit = defineEmits(['change-form-type']);
 const RegisterFormRef = ref()
 // 注册表单
 const registerForm = reactive({
-  email: 'chenhaibin@revopoint3d.com',
-  password: 'Aa123456',
+  email: '',
+  password: '',
   ticketCode: '',
   areaCode: '',
   captchaCode: ''
@@ -102,8 +105,11 @@ const rulesRegisterForm = reactive({
     },
     trigger: ['blur', 'change']
   },
-  ticketCode: [{ required: true, message: t('login.tip__empty',[t('login.label__email_code')]), trigger: 'blur' }],
-  captchaCode: [{ required: true, message: t('login.tip__empty',[t('login.label__img_code')]), trigger: 'blur' }]
+  ticketCode: [
+    { required: true, message: t('login.tip__empty', [t('login.label__email_code')]), trigger: 'blur' },
+    { min: 6, max: 6, message: t('login.valid__ticket_length_6'), trigger: 'blur' }
+  ],
+  captchaCode: [{ required: true, message: t('login.tip__empty', [t('login.label__img_code')]), trigger: 'blur' }]
 })
 
 // 通过邮箱注册
@@ -117,7 +123,16 @@ const handleRegisterByEmail = async () => {
     captchaId: imgCaptcha.captchaId,
     captchaCode
   }
-  const { code, data } = await RegisterByEmail(params, { msgType: 'success' })
+
+  // 找到 domain
+  const selectedRegion = AreaOptions.value.find(item => item.areaCode === areaCode)
+  let options = { msgType: 'success' }
+  if (selectedRegion?.domain) {
+    options['_baseURL'] = `https://${selectedRegion.domain}`
+  }
+  console.log(`%c>> $`, 'color:yellow', selectedRegion)
+
+  const { code, data } = await RegisterByEmail(params, options)
   console.log(`%c>> $ res`, 'color:yellow', data)
 
   if (code === 200 && data) {

@@ -13,9 +13,10 @@
         }}</el-button>
     </el-form-item>
 
+    <!-- TODO： 记住密码不清缓存，不记住密码清缓存或者用sessionStorage -->
     <el-form-item required style="margin-bottom: 0;">
       <el-checkbox v-model="isKeepPwd">
-        <span style="font-size: 12px">{{ $t('login.keep_pwd') }}</span>
+        <span :style="textStyle">{{ $t('login.keep_pwd') }}</span>
       </el-checkbox>
     </el-form-item>
 
@@ -24,22 +25,22 @@
       <template #reference>
         <el-form-item required>
           <el-checkbox v-model="isAllowPolicy">
-            <span style="font-size: 12px" v-html="c__allow_policy"></span>
+            <span :style="textStyle" v-html="c__allow_policy"></span>
           </el-checkbox>
         </el-form-item>
       </template>
     </el-popover>
 
-    <el-form-item>
+    <el-form-item style="padding-top: 20px;">
       <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button type="primary" @click="handleSubmitForm(loginFormRef)" v-click-outside="onClickOutside"> {{
+        <el-button type="primary" @click="handleSubmitForm(loginFormRef)" v-click-outside="onClickOutside" style="width: 100%"> {{
           $t('login.btn__login') }} </el-button>
       </div>
     </el-form-item>
 
     <el-form-item>
-      <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button @click="emit('change-form-type', 'register')">{{ $t('login.btn__register') }}</el-button>
+      <div style="display: flex; justify-content: space-evenly; width: 100%;">
+        <el-button @click="emit('change-form-type', 'register')" style="width: 100%;border-color: #ccc; color: #444">{{ $t('login.btn__register') }}</el-button>
       </div>
     </el-form-item>
   </el-form>
@@ -63,6 +64,11 @@ const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
 const GlobalStore = useGlobalStore()
+
+const textStyle = {
+  fontSize: '12px',
+  color: '#666'
+}
 
 const loginForm = reactive({
   email: 'chenhaibin@revopoint3d.com',
@@ -106,8 +112,8 @@ const onClickOutside = () => {
 // 隐私政策
 const c__allow_policy = computed(() => {
   return t('login.allow_policy', [
-    `<a href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a>`,
-    `<a href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a>`
+    ` <a href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a> `,
+    ` <a href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a> `
   ])
 })
 
