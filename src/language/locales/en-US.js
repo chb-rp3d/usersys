@@ -1,9 +1,15 @@
 export default {
   global: {
     btn__conform: '确认',
+    btn__ok: '确认',
+    btn__cancel: '取消',
     loading: '加载中...',
     title__backend: 'Revopoint 账号',
     placeholder: '请输入{0}',
+  },
+  pages: {
+    menu__userinfo: '个人信息',
+    menu__account: '账号与安全',
   },
   login: {
     // 注册流程公用
@@ -56,6 +62,12 @@ export default {
     valid__pwd_not_same: '两次密码不一致',
     old_password: '旧密码',
     new_password: '新密码',
-    placeholder_password_again: '请再次输入新密码',
+    placeholder__password_again: '请再次输入新密码',
+    placeholder__delete_account: '请输入密码',
+    change_password: '修改密码',
+    delete_account: '注销账号',
+    delete_account_title: '注销账号',
+    logout_success: '退出成功',
+    logout_is_sure: '是否要退出登陆?',
   }
 }

@@ -28,12 +28,12 @@ const { t } = useI18n()
 const menuCfg = [
   {
     id: 0,
-    name: t('login.email-修改密码'),
+    name: t('account.change_password'),
     type: 'updatePwd'
   },
   {
     id: 1,
-    name: t('login.title-注销账号'),
+    name: t('account.delete_account'),
     type: 'delAccount'
   },
 ]
@@ -52,14 +52,17 @@ const _handleCardType = (type) => {
 // 注销
 const handleDelAccount = async () => {
   // 弹窗确认
-  ElMessageBox.prompt('Please input your password', '注销账号', {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
-    inputPattern: REG_PWD,
-    inputErrorMessage: 'Invalid password',
-  })
+  ElMessageBox.prompt(
+    t('account.placeholder__delete_account'),
+    t('account.delete_account_title'),
+    {
+      confirmButtonText: t('global.btn__ok'),
+      cancelButtonText: t('global.btn__cancel'),
+      inputPattern: REG_PWD,
+      inputErrorMessage: t('login.valid__pwd'),
+    }
+  )
     .then(({ value }) => {
-      console.log(`%c>> $`, 'color:yellow', value)
       handleDeleteAccountConform(value)
     })
     .catch(() => {

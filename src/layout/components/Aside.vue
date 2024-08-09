@@ -1,15 +1,15 @@
 <template>
   <el-menu background-color="#ffffff" active-text-color="#fafafa" style="height: 100%;padding-top: 20px" :style="isAsideShow? {borderRight: 'unset'}: {}"
-    default-active="/home" :collapse="isCollapse" :collapse-transition="false" router>
+    :default-active="activeIndex" :collapse="isCollapse" :collapse-transition="false" router>
 
     <el-menu-item index="/home">
       <span slot="title">
-        <b>个人信息</b>
+        <b>{{ $t('pages.menu__userinfo') }}</b>
       </span>
     </el-menu-item>
     <el-menu-item index="/account">
       <span slot="title">
-        <b>账号与安全</b>
+        <b>{{ $t('pages.menu__account') }}</b>
       </span>
     </el-menu-item>
   </el-menu>
@@ -26,6 +26,11 @@ let props = defineProps({
   isAsideShow: {
     type: Boolean,
     default: false
+  },
+  //导航栏是否浮动显示
+  activeIndex: {
+    type: String,
+    default: '/home'
   },
 })
 console.log("props.isCollapse", props.isCollapse)

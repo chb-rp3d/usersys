@@ -13,15 +13,15 @@ export default defineConfig({
     postcss: {
       plugins: [tailwindcss, autoprefixer]
     },
-    preprocessorOptions: {
-      // 全局引入了 scss 的文件
-      scss: {
-        additionalData: `
-        @use "@/assets/styles/light.scss" as *;
-        @use "@/assets/styles/dark.scss" as *;
-      `,
-      },
-    },
+    // preprocessorOptions: {
+    //   // 全局引入了 scss 的文件
+    //   scss: {
+    //     additionalData: `
+    //     @use "@/assets/styles/light.scss" as *;
+    //     @use "@/assets/styles/dark.scss" as *;
+    //   `,
+    //   },
+    // },
   },
   resolve: {
     alias: {

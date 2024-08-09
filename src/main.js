@@ -18,7 +18,7 @@ import { useDomainStore } from '@/store/modules/domain'
 const app = createApp(App)
 
 // 设置默认黑暗模式
-// document.documentElement.classList.add('dark');
+document.documentElement.classList.remove('dark');
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)

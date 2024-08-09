@@ -18,18 +18,43 @@
 
 <script setup>
 import router from "@/router";
+import { useI18n } from 'vue-i18n'
 import avatarIcon from "@/assets/vue.svg"
-import { useUserRef } from "@/hooks/auth/useLog"
-import { useLogout } from "@/hooks/auth/useLoginForm"
-// 获取用户信息
-const user = useUserRef()
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { deleteCookie } from "@/utils/methods";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/config/global";
+import { HASH_LOGIN } from "@/hooks/auth/useLoginForm";
+const { t } = useI18n()
+
 const props = defineProps({
     icon: String
 })
 
 const emits = defineEmits(['toggle'])
 // 退出操作
-const logout = useLogout
+const logout = () => {
+    console.log('logout')
+    ElMessageBox.confirm(t('account.logout_is_sure'), t('account.logout'), {
+        confirmButtonText: t('global.btn__ok'),
+        cancelButtonText: t('global.btn__cancel'),
+        type: 'warning'
+    })
+        .then(() => {
+            deleteCookie(ACCESS_TOKEN)
+            deleteCookie(REFRESH_TOKEN)
+            router.replace(`/login#${HASH_LOGIN}`)
+            ElMessage({
+                type: 'success',
+                message: t('account.logout_success')
+            })
+        })
+        .catch(() => {
+            // ElMessage({
+            //   type: 'info',
+            //   message: t('account.logout_is_sure')
+            // })
+        })
+}
 </script>
 
 <style scoped></style>

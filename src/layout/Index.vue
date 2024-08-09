@@ -6,17 +6,17 @@
 
     <el-container style="height: 100%;">
       <el-aside v-if="!isSmall" :width="aside_witdh" :style="computedAsideStyle">
-        <Aside :isCollapse="isCollapse" :isAsideShow="isAsideShow"></Aside>
+        <Aside :activeIndex="activeIndex" :isAsideShow="isAsideShow"></Aside>
       </el-aside>
-      <el-drawer v-model="isAsideShow" :direction="'ltr'" :with-header="false">
-        <Aside :isCollapse="isCollapse" :isAsideShow="isAsideShow"></Aside>
+      <el-drawer v-else v-model="isAsideShow" :direction="'ltr'" :with-header="false" size="60%">
+        <Aside :activeIndex="activeIndex" :isAsideShow="isAsideShow"></Aside>
       </el-drawer>
 
       <el-main style="height: 100%; padding-top: 20px">
         <router-view v-slot="{ Component }">
-          <keep-alive>
-            <component :is="Component" />
-          </keep-alive>
+          <!-- <keep-alive> -->
+          <component :is="Component" />
+          <!-- </keep-alive> -->
         </router-view>
       </el-main>
     </el-container>
@@ -24,15 +24,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import Aside from "./components/Aside.vue";
 import Header from "./components/Header.vue";
 import { reactive, toRefs, onActivated } from "vue"
 import { useWindowSize } from '@vueuse/core'
+import router from '@/router'
 
 const { width } = useWindowSize()
 
 const isAsideShow = ref(false)
+const activeIndex = ref('/home')
 
 const data = reactive({
   isCollapse: false,
@@ -40,6 +42,17 @@ const data = reactive({
   icon: 'Fold'
 })
 
+watch(
+  () => router.currentRoute.value,
+  (newPath) => {
+    // 监听路由变化，更新当前表单
+    console.log(`%c>> newPath, newDomain`, 'color:yellow', newPath)
+    activeIndex.value = newPath.path === '/' ? '/home' : newPath.path
+  },
+  {
+    immediate: true
+  }
+)
 
 const computedAsideStyle = computed(() => {
   const base = {

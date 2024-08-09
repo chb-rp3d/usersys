@@ -11,7 +11,7 @@
     </el-form-item>
     <el-form-item required prop="newPassword2">
       <el-input v-model="updatePwdForm.newPassword2" type="password" show-password
-        :placeholder="$t('account.placeholder_password_again')" />
+        :placeholder="$t('account.placeholder__password_again')" />
     </el-form-item>
 
     <el-form-item>
@@ -92,7 +92,7 @@ const _handleModifyPwd = async () => {
     newPassword: string2Base64(updatePwdForm.newPassword2)
   }
   handleModifyPwd({
-    email: string2Base64('chenhaibin@revopoint3d.com')
+    email: string2Base64('')
   }, params)
 }
 

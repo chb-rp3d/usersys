@@ -1,18 +1,15 @@
 <template>
-  <el-form :model="registerForm" ref="RegisterFormRef" :rules="rulesRegisterForm" style="padding: 30px">
+  <el-form :model="registerForm" ref="RegisterFormRef"  label-width="auto" label-position="left" :rules="rulesRegisterForm" style="padding: 30px">
     <h5>
       {{ $t('login.has_account') }}
       <span @click="() => emit('change-form-type', 'login')" style="color: blue; cursor: pointer">{{
         $t('login.btn__login')
       }}</span>
     </h5>
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
     <ElDivider />
 
     <el-form-item :label="$t('login.label__region')" required prop="areaCode">
-      <el-select v-model="registerForm.areaCode" :placeholder="$t('login.placeholder__region')">
+      <el-select v-model="registerForm.areaCode" :placeholder="$t('login.placeholder__region')" filterable>
         <el-option v-for="item in AreaOptions" :key="item.areaCode" :label="item.areaName" :value="item.areaCode" />
       </el-select>
       <div style="color: red">{{ $t('login.tip__region') }}</div>
@@ -43,8 +40,8 @@
     </el-form-item>
 
     <el-form-item>
-      <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button type="primary" @click="submitForm(RegisterFormRef, handleRegisterByEmail)">{{
+      <div class="tw-pt-4 tw-w-full">
+        <el-button type="primary" @click="submitForm(RegisterFormRef, handleRegisterByEmail)" class="tw-w-full">{{
           $t('login.btn__register_now')
         }}</el-button>
       </div>

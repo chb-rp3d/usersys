@@ -32,31 +32,31 @@
     </el-popover>
 
     <el-form-item style="padding-top: 20px;">
-      <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button type="primary" @click="handleSubmitForm(loginFormRef)" v-click-outside="onClickOutside" style="width: 100%"> {{
-          $t('login.btn__login') }} </el-button>
-      </div>
+      <el-button type="primary" @click="handleSubmitForm(loginFormRef)" v-click-outside="onClickOutside"
+        style="width: 100%">
+        {{ $t('login.btn__login') }}
+      </el-button>
     </el-form-item>
 
     <el-form-item>
-      <div style="display: flex; justify-content: space-evenly; width: 100%;">
-        <el-button @click="emit('change-form-type', 'register')" style="width: 100%;border-color: #ccc; color: #444">{{ $t('login.btn__register') }}</el-button>
-      </div>
+      <el-button @click="emit('change-form-type', 'register')" class="tw-w-full">
+        {{ $t('login.btn__register') }}
+      </el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup>
-import { reactive, ref, unref, computed } from 'vue'
+import { reactive, ref, unref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
-import { string2Base64, setCookie } from '@/utils/methods'
+import { string2Base64, setCookie, getCookie, base64ToString } from '@/utils/methods'
 import { LoginByEmail } from '@/api/auth/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
-import { setLoginCache } from '@/hooks/auth/useLoginForm'
+import { cacheUserNameAndPwd, getCacheUserNameAndPwd, setLoginCache } from '@/hooks/auth/useLoginForm'
 import { useGlobalStore } from '@/store/modules/global'
 
 import { submitForm } from '@/hooks/auth/useLoginForm'
@@ -71,9 +71,10 @@ const textStyle = {
 }
 
 const loginForm = reactive({
-  email: 'chenhaibin@revopoint3d.com',
-  password: 'Aa123456',
+  email: '',
+  password: '',
 })
+
 // 表单校验规则(只要指定prop和添加required即可校验 但要自定义校验需要rules)
 const loginFormRules = reactive({
   email: {
@@ -105,6 +106,16 @@ const isAllowPolicy = ref(false)
 const isAllowRef = ref()
 const allowPOPoRefVisible = ref(false)
 
+onMounted(() => {
+  // 获取cookie的userinfo
+  const res = getCacheUserNameAndPwd()
+  if (res) {
+    loginForm.email = base64ToString(res.email)
+    loginForm.password = base64ToString(res.password)
+    isKeepPwd.value = true
+  }
+})
+
 const onClickOutside = () => {
   allowPOPoRefVisible.value = false;
 }
@@ -112,8 +123,8 @@ const onClickOutside = () => {
 // 隐私政策
 const c__allow_policy = computed(() => {
   return t('login.allow_policy', [
-    ` <a href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a> `,
-    ` <a href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a> `
+    ` <a style="color: #52a7fe; text-decoration: underline;" href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a> `,
+    ` <a style="color: #52a7fe; text-decoration: underline;" href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a> `
   ])
 })
 
@@ -129,7 +140,7 @@ const handleLogin = async () => {
   if (code === 200 && data) {
     if (isKeepPwd.value) {
       // TODO: 保存密码
-
+      cacheUserNameAndPwd(params)
     }
     setLoginCache(data)
     router.replace('/home')
@@ -164,7 +175,8 @@ const handleSubmitForm = async (formEl) => {
 .form-forgetPwd {
   margin-bottom: 10px;
 }
-.form-forgetPwd :deep(.el-form-item__content){
+
+.form-forgetPwd :deep(.el-form-item__content) {
   justify-content: flex-end;
 }
 </style>

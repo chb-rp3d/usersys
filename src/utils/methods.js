@@ -15,6 +15,15 @@ export function string2Base64(str) {
   return btoa(binaryString) // 将 Uint8Array 转换为 Base64 字符串
 }
 
+export function base64ToString(base64Str) {
+  const binaryString = atob(base64Str); // 将 Base64 字符串解码为二进制字符串
+  const decoder = new TextDecoder('utf-8'); // 创建一个 TextDecoder 实例
+  const data = new Uint8Array(binaryString.length); // 创建一个 Uint8Array
+  for (let i = 0; i < binaryString.length; i++) {
+    data[i] = binaryString.charCodeAt(i); // 将二进制字符串转换为 Uint8Array
+  }
+  return decoder.decode(data); // 将 Uint8Array 解码为原始文本
+}
 /**
  * @returns {String} 操作系统类型[惰性求值]
  */

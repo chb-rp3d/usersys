@@ -127,35 +127,20 @@ export const resetForm = (formEl) => {
   formEl.resetFields()
 }
 
+export function cacheUserNameAndPwd(data) {
+  setCookie('userInfo', JSON.stringify(data))
+}
+
+export function getCacheUserNameAndPwd() {
+  const cookie_userInfo = getCookie('userInfo')
+  return cookie_userInfo ? JSON.parse(cookie_userInfo) : null
+}
+
 export function setLoginCache(dataToken) {
   const domainStore = useUserStore()
   setCookie(ACCESS_TOKEN, dataToken.accessToken)
   setCookie(REFRESH_TOKEN, dataToken.refreshToken)
   domainStore.toggleLoginStatus(true)
-}
-
-export const useLogout = () => {
-  console.log('logout')
-  ElMessageBox.confirm('是否要退出登陆?', 'Warning', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  })
-    .then(() => {
-      deleteCookie(ACCESS_TOKEN)
-      deleteCookie(REFRESH_TOKEN)
-      router.replace(`/login#${HASH_LOGIN}`)
-      ElMessage({
-        type: 'success',
-        message: '退出成功'
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '退出取消'
-      })
-    })
 }
 
 // 用token登录

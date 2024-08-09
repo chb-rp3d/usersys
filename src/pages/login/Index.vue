@@ -28,8 +28,8 @@ import {
   handleFormType,
   useLoginFormSetup,
 } from '@/hooks/auth/useLoginForm'
-import { useDark, useToggle } from "@vueuse/core";
-const isDark = useDark();
+// import { useDark, useToggle } from "@vueuse/core";
+// const isDark = useDark();
 // const toggleDark = useToggle(isDark);
 const { t } = useI18n()
 
@@ -91,6 +91,10 @@ body {
   position: absolute;
   top: 25px;
   left: 25px; */
+}
+
+:deep(.el-form-item__label-wrap) {
+  margin-right: 8px;
 }
 
 :deep(.el-form-item__nowrap .el-form-item__content) {
