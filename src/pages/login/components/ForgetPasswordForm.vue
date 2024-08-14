@@ -7,21 +7,25 @@
     <el-form-item :label="$t('login.label__email_code')" required prop="ticketCode" class="el-form-item__nowrap">
       <el-input v-model="forgetPwdForm.ticketCode"
         :placeholder="$t('global.placeholder', [$t('login.label__email_code')])" />
-      <el-button @click="_handleGetEmailCode"> {{ $t('login.btn__email_code') }} </el-button>
+      <el-button v-if="!isCounting" @click="_handleGetEmailCode"> {{ $t('login.btn__email_code') }} </el-button>
+      <el-button v-else :disabled="isCounting"> {{ timeRemaining }} s </el-button>
     </el-form-item>
     <el-form-item :label="$t('login.label__img_code')" required prop="captchaCode" class="el-form-item__nowrap">
       <el-input v-model="forgetPwdForm.captchaCode"
         :placeholder="$t('global.placeholder', [$t('login.label__img_code')])" />
       <div class="img-captcha-wrap" @click="getImgCaptchaUrl">
-        <img :src="imgCaptcha.imgUrl" :alt="$t('login.label__img_code')" />
+        <div v-if="imgCaptcha.loading">{{ $t('global.loading') }}</div>
+        <el-skeleton-item v-else-if="!imgCaptcha.imgUrl" variant="h3" style="width: 100px" />
+        <img v-else :src="imgCaptcha.imgUrl" :alt="$t('login.label__img_code')" />
       </div>
     </el-form-item>
     <el-form-item :label="$t('login.label__password')" required prop="password">
       <el-input v-model="forgetPwdForm.password" type="password" show-password
         :placeholder="$t('login.placeholder__pwd_new')" />
     </el-form-item>
-    <el-form-item>
-      <el-button link type="primary" @click="_handleGetEmailCode">{{ $t('login.tip__email_code_miss') }}
+    <el-form-item class="tw-pt-2">
+      <el-button :disabled="isCounting" link type="primary" @click="_handleGetEmailCode">
+        {{ $t('login.tip__email_code_miss') }}
       </el-button>
     </el-form-item>
 
@@ -41,10 +45,11 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
-import { string2Base64 } from '@/utils/methods'
+import { useIntervalFn } from '@vueuse/core'
+import { openVn, string2Base64 } from '@/utils/methods'
 import { useI18n } from 'vue-i18n'
 
 import { ResetPwd } from '@/api/user/index.js'
@@ -56,6 +61,7 @@ import {
   imgCaptcha,
   getImgCaptchaUrl
 } from '@/hooks/auth/useLoginForm'
+import { ERROR_CODE_ENUM } from '@/config/errCodeEnum'
 
 const emit = defineEmits(['change-form-type']);
 
@@ -74,29 +80,30 @@ const forgetPwdFormRules = reactive({
     validator: (rule, value, callback) => {
       // console.log(`%c>> $`, 'color:yellow', rule, value)
       // 定义正则表达式
-      if (!REG_EMAIL.test(value)) {
-        callback(new Error('邮箱格式不正确'))
+      if (!value.trim()) {
+        callback(new Error(t('global.placeholder', [t('login.label__email')])))
+      } else if (!REG_EMAIL.test(value)) {
+        callback(new Error(t('login.valid__email_format')))
       } else {
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   },
   password: {
     validator: (rule, value, callback) => {
       // console.log(`%c>> $`, 'color:yellow', rule, value)
       // 定义正则表达式
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.valid')))
+        callback(new Error(t('login.tip__password')))
       } else {
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   },
   captchaCode: [
     { required: true, message: t('global.placeholder', [t('login.label__img_code')]), trigger: 'blur' },
-    { min: 6, max: 6, message: t('login.valid__ticket_length_6'), trigger: 'blur' }
   ],
   ticketCode: [
     { required: true, message: t('login.valid__ticket_require'), trigger: 'blur' },
@@ -105,26 +112,73 @@ const forgetPwdFormRules = reactive({
 })
 
 const _handleGetEmailCode = async () => {
-  const params = {
-    email: string2Base64(forgetPwdForm.email),
-    locale: forgetPwdForm.areaCode,
-    action: 'reset_password'
-  }
-  handleGetEmailCode(params)
+  // 不输邮箱无法请求
+  await forgetPwdFormRef.value.validateField('email', async (valid, fields) => {
+    if (valid) {
+      startCountdown()
+      const params = {
+        email: string2Base64(forgetPwdForm.email),
+        locale: forgetPwdForm.areaCode,
+        action: 'reset_password'
+      }
+      handleGetEmailCode(params)
+    }
+  })
+
 }
 
-// 忘记密码
+// 忘记密码, 重置密码
 const handleRegisterByEmail = async () => {
   const params = {
     email: string2Base64(forgetPwdForm.email),
-    password: forgetPwdForm.password,
+    newPassword: string2Base64(forgetPwdForm.password),
     ticketCode: forgetPwdForm.ticketCode,
     captchaId: imgCaptcha.captchaId,
-    captchaCode: forgetPwdForm.forgetPwdForm,
+    captchaCode: forgetPwdForm.captchaCode,
 
   }
-  const res = await ResetPwd(params)
+  const { code, data, message } = await ResetPwd(params)
+  if (code === 200) {
+    openVn({ msg: t('login.toast__reset_password_success'), type: 'success' })
+    emit('change-form-type', 'login')
+  } else {
+    const errMsg = ERROR_CODE_ENUM[code] || message
+    if (errMsg) {
+      openVn({ msg: errMsg, type: 'error' })
+    }
+  }
 }
+
+
+// 定义倒计时相关状态
+const timeRemaining = ref(0)
+const isCounting = ref(false)
+
+// 定义倒计时函数
+const countdown = () => {
+  timeRemaining.value -= 1
+  if (timeRemaining.value <= 0) {
+    clearInterval(interval)
+    isCounting.value = false
+  }
+}
+
+// 使用 useIntervalFn 来设置倒计时
+const { pause, resume, interval } = useIntervalFn(countdown, 1000)
+
+// 定义开始倒计时的方法
+const startCountdown = () => {
+  timeRemaining.value = 60
+  isCounting.value = true
+  resume()
+}
+
+// 清理定时器
+onUnmounted(() => {
+  pause()
+})
+
+pause()
 
 </script>
 

@@ -5,12 +5,13 @@
 import { reactive, ref, onMounted, watch } from 'vue'
 import router from '@/router'
 // import { useRouter, useRoute } from 'vue-router'
-import { GetImgCaptcha, GetEmailCode, RegisterByEmail, LoginByToken, RefreshToken } from '@/api/auth'
+import { GetImgCaptcha, GetEmailCode, LoginByToken, RefreshToken } from '@/api/auth'
 import { Unregister } from '@/api/user'
 import { GetArea } from '@/api/global'
 import { string2Base64, deleteCookie, getCookie, setCookie } from '@/utils/methods'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
+import { $t } from '@/language/index'
 
 export const HASH_LOGIN = 'login'
 export const HASH_REGISTER = 'register'
@@ -87,19 +88,28 @@ const getGetArea = async () => {
 // ************* 图形验证码
 // 获取图形验证码
 export const imgCaptcha = reactive({
+  loading: true,
   captchaId: '',
   imgUrl: ''
 })
 export const getImgCaptchaUrl = async () => {
+  imgCaptcha.loading = true
   const { code, data } = await GetImgCaptcha()
-  imgCaptcha.captchaId = data.captchaId
-  imgCaptcha.imgUrl = data.content
+  if (code === 200 && !!data) {
+    imgCaptcha.captchaId = data.captchaId
+    imgCaptcha.imgUrl = data.content
+  }
+  imgCaptcha.loading = false
 }
 // ************* 获取邮箱验证码
 // 获取邮箱验证码
 export const handleGetEmailCode = async (params) => {
   const res = GetEmailCode(params)
   console.log(`%c>> $ GetEmailCode`, 'color:yellow', res)
+  ElMessage({
+    type: 'success',
+    message: $t('login.toast__code_send')
+  })
 }
 
 // **************

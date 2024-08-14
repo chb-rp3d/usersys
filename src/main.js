@@ -9,11 +9,12 @@ import 'element-plus/dist/index.css'
 // import '@/assets/styles/dark.scss' 
 
 import router from '@/router/index'
-import vueI18n from '@/language/index'
+import vueI18n from '@/language/index' 
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import store from '@/store/index'
 import { useDomainStore } from '@/store/modules/domain'
+import '@/assets/styles/global.css'
 
 const app = createApp(App)
 

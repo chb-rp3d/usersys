@@ -49,7 +49,7 @@ export const ERROR_CODE_ENUM = {
   103003: 'EMAIL_ILLEGAL', // 邮箱不合法
   103004: 'PASSWORD_NOT_STRONG', // 密码强度不够
   103005: 'EMAIL_TICKET_ERROR', // 邮箱验证码不正确
-  103006: 'COUNTRY_NOT_MATCH	国家码与数据区不匹配', // 正确见data
+  103006: 'COUNTRY_NOT_MATCH', // 	国家码与数据区不匹配正确见data
   103007: 'OLD_PASSWORD_ERROR', // 旧密码不正确
   104001: 'PASSWORD_ERROR', // 用户名或密码错误
   104002: 'ACCOUNT_FORBIDDEN', // 此账号已被禁用

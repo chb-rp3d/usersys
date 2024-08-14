@@ -1,23 +1,13 @@
 import axios from 'axios'
-import { h } from 'vue'
 import { ElMessage } from 'element-plus'
 import { BASE_URL, PORT } from '@/config/global.js'
 import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
-import { getOsType, getToken } from '@/utils/methods.js'
+import { getOsType, getToken, openVn } from '@/utils/methods.js'
 
 import { ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE } from '@/config/errCodeEnum'
 import { GET_IP_URL } from '@/api/global'
 
-const openVn = ({ type = 'warning', msg }) => {
-  ElMessage({
-    message: h('p', { style: 'line-height: 1; font-size: 14px' }, [
-      h('span', null, msg)
-      // h('i', { style: 'color: teal' }, 'VNode'),
-    ]),
-    type
-  })
-}
-
+const OS_Type = getOsType()
 const instance = axios.create({
   baseURL: BASE_URL, // 后台 API 接口地址
   timeout: 5000, // 请求超时时间
@@ -25,7 +15,7 @@ const instance = axios.create({
     'Content-Type': 'application/json',
     'x-revo-software': 'Test',
     'x-revo-software-version': '1.0.0',
-    'x-revo-os-type': 'Windows', // TODO: getOsType
+    'x-revo-os-type': OS_Type, // TODO: getOsType
     'x-revo-os-version': '11'
   }
 })
@@ -36,10 +26,11 @@ instance.interceptors.request.use(
     // 在发送请求之前做一些操作，例如添加请求头、处理请求参数等
     // TODO: 加一个token刷新逻辑
 
-    // 更新baseUrl
-    if (!!config?._baseURL) {
-      config.baseURL = config?._baseURL
-      delete config._baseURL
+    // 更新baseUrl 【不知道用户哪个区的时候需要，测试环境屏蔽】
+    config['__env__'] = import.meta.env
+    if (!!config?.__baseURL && !import.meta.env.DEV) {
+      config.baseURL = config?.__baseURL
+      delete config.__baseURL
     }
 
     console.log(`%c>> $请求拦截器-${config?.url}`, 'color:yellow', config)
@@ -65,23 +56,22 @@ instance.interceptors.response.use(
     // 对响应数据进行处理，例如解析数据、处理应状态码等
     // 正确和错误分别怎么处理，超时提示等
     const { config = {}, status, statusText, data } = response
-    // * 默认提示错误信息
-    const { withoutMsg = false, msgType = 'error' } = config
+    // * 提示信息
+    const { withFailedMsg = false, withSuccessMsg } = config
     // 请求成功（与后端通信成功，但接口逻辑不一定正确，分别处理） && statusText === 'OK' ？？？
     const hasSuccess = status === 200 && data && Reflect.has(data, 'code')
     if (hasSuccess) {
       console.log(`响应拦截器~~${config.url}`, 'color:yellow', response, data)
       if (data.code === 200) {
         if (config.url === GET_IP_URL && data.data?.domain) {
-          console.log(`%c>> $??data.code!!!!`, 'color:yellow', config.url, GET_IP_URL, data.data.domain)
           setBaseURL(data.data.domain)
         }
-        // if (withSuccessMsg == true) {
-        //   openVn({ msg: `${config.url}请求成功`, type: 'success' })
-        // }
+        if (withSuccessMsg === true) {
+          openVn({ msg: `${config.url}请求成功`, type: 'success' })
+        }
       } else {
         const errMsg = ERROR_CODE_ENUM[data.code]
-        if (withoutMsg != true && errMsg) {
+        if (withFailedMsg === true && errMsg) {
           // token过期重刷
           // 104004	TEMP_TOKEN_EXPIRE	临时token不存在或已过期
           // 104005	REFRESH_TOKEN_EXPIRE	refreshToken不存在或已过期
@@ -91,10 +81,10 @@ instance.interceptors.response.use(
           }
           console.log(errMsg)
           if (errMsg) {
-            openVn({ msg: errMsg, type: msgType })
+            openVn({ msg: errMsg, type: 'error' })
           } else {
             console.log(`%c>> $未知错误`, 'color:yellow', config.url)
-            openVn({ msg: '未知错误', type: msgType })
+            openVn({ msg: '未知错误', type: 'error' })
           }
         }
       }
@@ -116,7 +106,7 @@ export function setBaseURL(domain) {
   // if(domain.indexOf('http') > -1) {
   //   instance.defaults.baseURL = `${domain}`;
   // } else {
-  //   instance.defaults.baseURL = `https:${domain}`;
+  //   instance.defaults.baseURL = `https//:${domain}`;
   // }
 }
 export default instance

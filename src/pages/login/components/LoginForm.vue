@@ -13,7 +13,6 @@
         }}</el-button>
     </el-form-item>
 
-    <!-- TODO： 记住密码不清缓存，不记住密码清缓存或者用sessionStorage -->
     <el-form-item required style="margin-bottom: 0;">
       <el-checkbox v-model="isKeepPwd">
         <span :style="textStyle">{{ $t('login.keep_pwd') }}</span>
@@ -51,7 +50,7 @@ import { reactive, ref, unref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
-import { string2Base64, setCookie, getCookie, base64ToString } from '@/utils/methods'
+import { string2Base64, setCookie, getCookie, base64ToString, openVn } from '@/utils/methods'
 import { LoginByEmail } from '@/api/auth/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ClickOutside as vClickOutside } from 'element-plus'
@@ -60,6 +59,7 @@ import { cacheUserNameAndPwd, getCacheUserNameAndPwd, setLoginCache } from '@/ho
 import { useGlobalStore } from '@/store/modules/global'
 
 import { submitForm } from '@/hooks/auth/useLoginForm'
+import { ERROR_CODE_ENUM } from '@/config/errCodeEnum'
 const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
@@ -79,13 +79,15 @@ const loginForm = reactive({
 const loginFormRules = reactive({
   email: {
     validator: (rule, value, callback) => {
-      if (!REG_EMAIL.test(value)) {
+      if (!value.trim()) {
+        callback(new Error(t('global.placeholder', [t('login.label__email')])))
+      } else if (!REG_EMAIL.test(value)) {
         callback(new Error(t('login.valid__email_format')))
       } else {
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   },
   password: {
     validator: (rule, value, callback) => {
@@ -95,7 +97,7 @@ const loginFormRules = reactive({
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   }
 })
 
@@ -123,8 +125,8 @@ const onClickOutside = () => {
 // 隐私政策
 const c__allow_policy = computed(() => {
   return t('login.allow_policy', [
-    ` <a style="color: #52a7fe; text-decoration: underline;" href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a> `,
-    ` <a style="color: #52a7fe; text-decoration: underline;" href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a> `
+    ` <a style="color: var(--el-color-primary-light-3); text-decoration: underline;" href="${GlobalStore.USER_POLICY}">${t('login.user_agreement')}</a> `,
+    ` <a style="color: var(--el-color-primary-light-3); text-decoration: underline;" href="${GlobalStore.PRIVACY_POLICY}">${t('login.privacy_policy')}</a> `
   ])
 })
 
@@ -134,9 +136,13 @@ const handleLogin = async () => {
     email: string2Base64(loginForm.email),
     password: string2Base64(loginForm.password)
   }
-  const { code, data } = await LoginByEmail(params, { msgType: 'success' })
+  const { code, data } = await LoginByEmail(params)
   // 携带 accessToken 去请求 第一个接口 
-  console.log('denglu 成功', data)
+  // console.log('denglu 成功', data)
+
+
+
+
   if (code === 200 && data) {
     if (isKeepPwd.value) {
       // TODO: 保存密码
@@ -150,6 +156,10 @@ const handleLogin = async () => {
       type: 'success'
     })
   } else {
+    const errMsg = ERROR_CODE_ENUM[code]
+    if (errMsg) {
+      openVn({ msg: errMsg, type: 'error' })
+    }
     // ElMessage({
     //   showClose: true,
     //   message: t('login.failed'),

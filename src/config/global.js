@@ -8,7 +8,7 @@
 // 美国：prod-admin.us.chishine3d.com
 // 德国/欧盟：prod-admin.eu.chishine3d.com
 // 统一服务：prod-admin.common.chishine3d.com
-export const BASE_URL = 'https://test-admin.chishine3d.com/cloud-api'
+export const BASE_URL = 'https://test-admin.chishine3d.com'
 
 // 端口号，测试-10006
 export const PORT = '10006'

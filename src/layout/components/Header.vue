@@ -1,9 +1,9 @@
 <template>
-    <div class="tw-flex tw-justify-between tw-items-center tw-leading-[70px] tw-bg-[#fff]">
+    <div class="tw-flex tw-justify-between tw-items-center tw-leading-[70px] tw-bg-[#fff] tw-px-3">
         <!--菜单伸缩-->
         <div class="tw-flex tw-items-center tw-gap-4">
-            <el-avatar shape="square" :size="50" :src="avatarIcon" style=" border: 1px solid lightgrey"></el-avatar>
-            <span class="tw-text-[1rem] tw-weight-bold">REVOPOINT 账号</span>
+            <el-avatar shape="square" :size="50" fit="contain" :src="avatarIcon" style=" background-color: #fff; padding: 2px;"></el-avatar>
+            <span class="tw-text-[1rem] tw-weight-bold">Revopoint 账号</span>
             <div class="md:tw-hidden tw-text-[20px] tw-flex tw-items-center" @click="emits('toggle')">
                 <el-icon class="tw-cursor-pointer">
                     <Expand />
@@ -19,7 +19,7 @@
 <script setup>
 import router from "@/router";
 import { useI18n } from 'vue-i18n'
-import avatarIcon from "@/assets/vue.svg"
+import avatarIcon from "@/assets/revoscan.png"
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { deleteCookie } from "@/utils/methods";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/config/global";

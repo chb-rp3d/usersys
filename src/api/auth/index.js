@@ -3,16 +3,18 @@
  */
 
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
-import { getToken } from '@/utils/methods'
-import api from '../../utils/http.js'
+import { getToken, openVn } from '@/utils/methods'
+import api from '@/utils/http.js'
+import { GetEmailDomain } from '../global/index.js'
+import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
 
 const API = {
-  GetImgCaptcha: 'user/img-captcha',
-  GetEmailCode: 'user/ticket/email',
-  RegisterByEmail: 'user/account/register/email',
-  LoginByEmail: '/auth/password',
-  LoginByToken: '/auth/temporaryToken',
-  RefreshToken: '/auth/refreshToken'
+  GetImgCaptcha: '/cloud-api/user/img-captcha',
+  GetEmailCode: '/cloud-api/user/ticket/email',
+  RegisterByEmail: '/cloud-api/user/account/register/email',
+  LoginByEmail: '/cloud-api/auth/password',
+  LoginByToken: '/cloud-api/auth/temporaryToken',
+  RefreshToken: '/cloud-api/auth/refreshToken'
 }
 
 /**
@@ -30,16 +32,29 @@ export function GetEmailCode(params = {}, options = {}) {
 }
 
 /**
- * @description: 获取地区列表(含域名)
+ * @description: 用户注册
  */
 export function RegisterByEmail(params = {}, options = {}) {
   return api.post(API.RegisterByEmail, { ...params }, { ...options })
 }
 /**
- * @description: 邮箱密码登录
+ * @description: 邮箱密码登录 [先获取 domain]
  */
-export function LoginByEmail(params = {}, options = {}) {
-  return api.post(API.LoginByEmail, { ...params }, { ...options })
+export async function LoginByEmail(params = {}, options = {}) {
+  try {
+    const { code, data } = await GetEmailDomain(params.email, { withFailedMsg: true })
+    if (code === 200 && !!data) {
+      return api.post(API.LoginByEmail, { ...params }, { ...options, __baseURL: `https://${data.domain}` })
+    } else {
+      // const errMsg = ERROR_CODE_ENUM[code]
+      // if (errMsg) {
+      //   openVn({ msg: errMsg, type: 'error' })
+      // } 登录账号错误会出现两次提示
+      return { code }
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 /**
  * @description: 临时凭证登录【用于客户端跳转过来】

@@ -39,7 +39,7 @@ useLoginFormSetup()
 const titleCfg = {
   login: t('login.title__login'),
   register: t('login.title__register'),
-  forgetPwd: t('login.title__forgetPassword')
+  forgetPwd: t('login.title__forget_password')
 }
 const formTitle = computed(() => {
   return titleCfg[formType.value]
@@ -102,6 +102,7 @@ body {
   gap: 8px;
 
   .img-captcha-wrap {
+    min-width: 83px;
     img {
       cursor: pointer;
       display: block

@@ -1,10 +1,10 @@
 <template>
   <el-container style="height: 100%; background-color:#F7FAF8;">
-    <el-header style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid; ">
+    <el-header style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid; padding: 0">
       <Header :icon="icon" @toggle="handleToggle"></Header>
     </el-header>
 
-    <el-container style="height: 100%;">
+    <el-container style="height: calc(100vh - 71px);">
       <el-aside v-if="!isSmall" :width="aside_witdh" :style="computedAsideStyle">
         <Aside :activeIndex="activeIndex" :isAsideShow="isAsideShow"></Aside>
       </el-aside>
@@ -56,7 +56,7 @@ watch(
 
 const computedAsideStyle = computed(() => {
   const base = {
-    height: 'calc(100vh - 71px)',
+    // height: 'calc(100vh - 71px)',
     marginLeft: '-1px',
   }
   if (width.value > 768) {
@@ -112,6 +112,9 @@ const { isCollapse, aside_witdh, icon } = toRefs(data)
 </script>
 
 <style scoped>
+#app {
+  height: 100%
+}
 .el-header {
   /**background-color: #B3C0D1;**/
   color: #333;

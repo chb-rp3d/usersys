@@ -1,32 +1,23 @@
-import { GetEmailDomain } from '@/api/global'
 import { ModifyPwd } from '@/api/user'
+import { ElMessage } from 'element-plus'
+import i18n from '@/language/index'
 
-export async function handleModifyPwd(emailParams, params) {
-  const { code, data } = await GetEmailDomain(emailParams)
-  if (code === 200 && data) {
-    handleFetchModifyPwd(params, `https:${data.domain}`)
+/**
+ * @description 登录后的修改密码 [登录后修改密码无需请求domain，因为已经知道]
+ * @param {Object} params 参数
+ */
+export async function handleModifyPwd(params, options) {
+  const { code } = await ModifyPwd(params, { withFailedMsg: true})
+
+  // * 修改完密码之后：直接更新token，toast提示，无需重新登录
+  if (code === 200) {
+    ElMessage({
+      showClose: true,
+      message: i18n.global.t('account.update_password_success'),
+      type: 'success'
+    })
+    return 'success'
+  } else {
+    return 'failed'
   }
-}
-
-export async function handleFetchModifyPwd(params, domain) {
-  const { code, data } = await ModifyPwd(params, {
-    // _baseURL: domain // TODO: 提测放开
-  })
-  console.log(`%c>> $ModifyPwd`, 'color:yellow', data)
-
-  // TODO: 修改完密码之后是直接更新token，用户什么都感受不到，还是清空登录状态，重新登陆
-  // if (code === 200 && data) {
-  //   ElMessage({
-  //     showClose: true,
-  //     message: t('login.success'),
-  //     type: 'success'
-  //   })
-  //   // router.replace('/Index')
-  // } else {
-  //   ElMessage({
-  //     showClose: true,
-  //     message: t('login.failed'),
-  //     type: 'error'
-  //   })
-  // }
 }

@@ -1,12 +1,12 @@
 /**
  * @description: 全局、通用接口
  */
-import api from '../../utils/http.js'
+import api from '@/utils/http.js'
 
 const API = {
-  GetIP: 'global/domain/ip',
-  GetArea: 'global/area/',
-  GetEmailDomain: 'global/domain/email' // 获取邮箱-域名对应关系
+  GetIP: '/cloud-api/global/domain/ip',
+  GetArea: '/cloud-api/global/area/',
+  GetEmailDomain: '/cloud-api/global/domain/email' // 获取邮箱-域名对应关系
 }
 
 export const GET_IP_URL = API.GetIP
@@ -29,8 +29,8 @@ export function GetIP() {
 }
 
 /**
- * @description: 获取邮箱-域名对应关系
+ * @description: 获取邮箱-域名对应关系。不知道用户是哪个区的时候，才需要调这个接口，如登录、重置密码
  */
-export function GetEmailDomain(params = {}) {
-  return api.post(API.GetEmailDomain, { ...params }, { withoutMsg: true })
+export function GetEmailDomain(email) {
+  return api.post(API.GetEmailDomain, { email }, { withoutMsg: true })
 }

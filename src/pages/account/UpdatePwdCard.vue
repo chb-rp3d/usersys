@@ -16,7 +16,7 @@
 
     <el-form-item>
       <div style="display: flex; justify-content: space-evenly; width: 100%">
-        <el-button type="primary" @click="handleSubmitForm(updatePwdFormRef)"> {{
+        <el-button type="primary" :loading="isLoading" @click="handleSubmitForm(updatePwdFormRef)"> {{
           $t('global.btn__conform') }} </el-button>
       </div>
     </el-form-item>
@@ -28,12 +28,10 @@ import { reactive, ref, unref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
-import { string2Base64 } from '@/utils/methods'
-import { ModifyPwd } from '@/api/user/index.js'
+import { deleteCookie, string2Base64 } from '@/utils/methods'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 
-import { submitForm } from '@/hooks/auth/useLoginForm'
+import { getCacheUserNameAndPwd, submitForm } from '@/hooks/auth/useLoginForm'
 import { handleModifyPwd } from '@/hooks/account/useAccount'
 import { useUserStore } from '@/store/modules/user'
 const userStore = useUserStore()
@@ -57,7 +55,7 @@ const updatePwdFormRules = reactive({
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   },
   newPassword1: {
     validator: (rule, value, callback) => {
@@ -67,33 +65,44 @@ const updatePwdFormRules = reactive({
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   },
   newPassword2: {
     validator: (rule, value, callback) => {
       if (!REG_PWD.test(value)) {
         callback(new Error(t('login.tip__password')))
       } else if (updatePwdForm.newPassword1 != value) {
-        callback(new Error(t('account.valid__pwd_not_same')))
+        callback(new Error(t('account.valid__password_not_same')))
+      } else if (updatePwdForm.oldPassword === value) {
+        callback(new Error(t('account.valid__password_same')))
       } else {
         callback()
       }
     },
-    trigger: ['blur', 'change']
+    trigger: ['blur']
   },
 })
 
 // 获取loginForm的实例
 const updatePwdFormRef = ref()
+const isLoading = ref(false)
 
 const _handleModifyPwd = async () => {
+  isLoading.value = true
   const params = {
     oldPassword: string2Base64(updatePwdForm.oldPassword),
     newPassword: string2Base64(updatePwdForm.newPassword2)
   }
-  handleModifyPwd({
-    email: string2Base64('')
-  }, params)
+  const res = await handleModifyPwd(params)
+  isLoading.value = false
+  // 完成后 重置表单，清空原来保存的密码
+  if (res === 'success') {
+    updatePwdFormRef.value.resetFields()
+
+    const cache = getCacheUserNameAndPwd()
+    console.log(`%c>> $`, 'color:yellow', cache)
+    !!cache && deleteCookie('userInfo')
+  }
 }
 
 // 表单校验和提交

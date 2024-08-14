@@ -1,13 +1,13 @@
 /**
  * @description: 登录接口、用户信息相关
  */
-import api from '../../utils/http.js'
+import api from '@/utils/http.js'
 
 const API = {
-  GetUserInfo: '/user/info',
-  ResetPwd: '/user/password/reset',
-  ModifyPwd: '/user/password/modify',
-  Unregister: '/user/account/unregister' // 注销
+  GetUserInfo: '/cloud-api/user/info',
+  ResetPwd: '/cloud-api/user/password/reset',
+  ModifyPwd: '/cloud-api/user/password/modify',
+  Unregister: '/cloud-api/user/account/unregister' // 注销
 }
 
 /**
@@ -15,24 +15,20 @@ const API = {
  */
 export function GetUserInfo() {
   return api.get(API.GetUserInfo, {
-    // requireToken: true,
     withoutMsg: true
-    // aaa: true,
-    // msgType: true
   })
 }
 /**
  * @description: 重置密码，忘记密码
  */
-export function ResetPwd(params = {}) {
+export function ResetPwd(params = {}, options = {}) {
   return api.post(
     API.ResetPwd,
     {
       ...params
     },
     {
-      requireToken: true,
-      aaa: true
+      ...options
     }
   )
 }

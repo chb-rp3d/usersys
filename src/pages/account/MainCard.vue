@@ -59,7 +59,8 @@ const handleDelAccount = async () => {
       confirmButtonText: t('global.btn__ok'),
       cancelButtonText: t('global.btn__cancel'),
       inputPattern: REG_PWD,
-      inputErrorMessage: t('login.valid__pwd'),
+      inputType: 'password',
+      inputErrorMessage: t('login.tip__password'),
     }
   )
     .then(({ value }) => {

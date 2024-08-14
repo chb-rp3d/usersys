@@ -1,5 +1,7 @@
 import { RefreshToken } from '@/api/auth'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
+import { ElMessage } from 'element-plus'
+import { h } from 'vue'
 
 /**
  * @description: 字符串转Base64
@@ -16,13 +18,13 @@ export function string2Base64(str) {
 }
 
 export function base64ToString(base64Str) {
-  const binaryString = atob(base64Str); // 将 Base64 字符串解码为二进制字符串
-  const decoder = new TextDecoder('utf-8'); // 创建一个 TextDecoder 实例
-  const data = new Uint8Array(binaryString.length); // 创建一个 Uint8Array
+  const binaryString = atob(base64Str) // 将 Base64 字符串解码为二进制字符串
+  const decoder = new TextDecoder('utf-8') // 创建一个 TextDecoder 实例
+  const data = new Uint8Array(binaryString.length) // 创建一个 Uint8Array
   for (let i = 0; i < binaryString.length; i++) {
-    data[i] = binaryString.charCodeAt(i); // 将二进制字符串转换为 Uint8Array
+    data[i] = binaryString.charCodeAt(i) // 将二进制字符串转换为 Uint8Array
   }
-  return decoder.decode(data); // 将 Uint8Array 解码为原始文本
+  return decoder.decode(data) // 将 Uint8Array 解码为原始文本
 }
 /**
  * @returns {String} 操作系统类型[惰性求值]
@@ -31,18 +33,16 @@ export function base64ToString(base64Str) {
 export function getOsType() {
   let cachedOsType = null
 
-  return () => {
-    if (cachedOsType === null) {
-      const userAgent = navigator?.userAgent
-      if (userAgent.indexOf('Mac') > -1) {
-        return 'Mac'
-      } else if (userAgent.indexOf('Windows') > -1) {
-        return 'Windows'
-      }
-      return userAgent || 'Unknown' // 如果不是 Windows 或 Mac，则返回 Unknown
+  if (cachedOsType === null) {
+    const userAgent = navigator?.userAgent
+    if (userAgent.indexOf('Mac') > -1) {
+      return 'Mac'
+    } else if (userAgent.indexOf('Windows') > -1) {
+      return 'Windows'
     }
-    return cachedOsType
+    return userAgent || 'Unknown' // 如果不是 Windows 或 Mac，则返回 Unknown
   }
+  return cachedOsType
 }
 
 /**
@@ -106,10 +106,25 @@ export function getCookie(name) {
   }
   return null
 }
+
 /**
  * 删除Cookie
  * @param {String} name
  */
 export function deleteCookie(name) {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+}
+
+/**
+ * 打开toast 弹窗
+ * @param {String} name
+ */
+export const openVn = ({ type = 'warning', msg }) => {
+  ElMessage({
+    message: h('p', { style: 'line-height: 1; font-size: 14px' }, [
+      h('span', null, msg)
+      // h('i', { style: 'color: teal' }, 'VNode'),
+    ]),
+    type
+  })
 }
