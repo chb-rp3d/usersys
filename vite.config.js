@@ -6,6 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 import dotenv from 'dotenv'
+import { generateDistFolderName } from './src/utils/sys'
 
 // 加载 .env 文件
 dotenv.config()
@@ -45,6 +46,7 @@ export default defineConfig({
     }
   },
   build: {
+    outDir: generateDistFolderName(),
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -52,5 +54,5 @@ export default defineConfig({
         drop_debugger: true
       }
     }
-  },
+  }
 })

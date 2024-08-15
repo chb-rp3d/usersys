@@ -1,3 +1,6 @@
+import path from 'path'
+import fs from 'fs';
+
 /**
  * x-revo-os
  * @returns {String} 操作系统类型[惰性求值]
@@ -68,3 +71,27 @@ export const getOsType = (() => {
     return cachedOsVersion
   }
 })()
+
+
+
+export function generateDistFolderName() {
+  const baseDir = path.resolve(process.cwd(), 'dist');
+  const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  let counter = 1;
+
+  // 获取所有匹配格式的文件夹名称
+  const existingFolders = fs.readdirSync(baseDir)
+    .filter(folder => folder.startsWith(`dist-${today}`))
+    .map(folder => {
+      const match = folder.match(/dist-\d{8}-(\d+)/);
+      return match ? parseInt(match[1], 10) : null;
+    })
+    .filter(number => number !== null);
+
+  // 如果有匹配的文件夹，则找到最大的序号并递增
+  if (existingFolders.length > 0) {
+    counter = Math.max(...existingFolders) + 1;
+  }
+
+  return `dist-${today}-${counter}`;
+}

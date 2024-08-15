@@ -1,9 +1,9 @@
 <template>
   <el-container style="height: 100%; background-color:#F7FAF8;">
-    <el-header style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid; padding: 0">
+    <el-header
+      style="text-align: right; font-size: 12px;height: 100%;border-bottom: rgba(168,168,168,0.3) 1px solid; padding: 0">
       <Header :icon="icon" @toggle="handleToggle"></Header>
     </el-header>
-
     <el-container style="height: calc(100vh - 71px);">
       <el-aside v-if="!isSmall" :width="aside_witdh" :style="computedAsideStyle">
         <Aside :activeIndex="activeIndex" :isAsideShow="isAsideShow"></Aside>
@@ -12,12 +12,15 @@
         <Aside :activeIndex="activeIndex" :isAsideShow="isAsideShow"></Aside>
       </el-drawer>
 
-      <el-main style="height: 100%; padding-top: 20px">
+      <el-main class="tw-relative">
         <router-view v-slot="{ Component }">
           <!-- <keep-alive> -->
           <component :is="Component" />
           <!-- </keep-alive> -->
         </router-view>
+        <div class="tw-absolute tw-bottom-0 tw-right-0 tw-left-0 tw-flex tw-justify-center tw-border-t">
+          <span class="tw-m-2 tw-text-sm tw-text-[#959595]">v {{ V }}</span>
+        </div>
       </el-main>
     </el-container>
   </el-container>
@@ -30,6 +33,7 @@ import Header from "./components/Header.vue";
 import { reactive, toRefs, onActivated } from "vue"
 import { useWindowSize } from '@vueuse/core'
 import router from '@/router'
+const V = import.meta.env?.VITE_VERSION
 
 const { width } = useWindowSize()
 
@@ -115,6 +119,7 @@ const { isCollapse, aside_witdh, icon } = toRefs(data)
 #app {
   height: 100%
 }
+
 .el-header {
   /**background-color: #B3C0D1;**/
   color: #333;
