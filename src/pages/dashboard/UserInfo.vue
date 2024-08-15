@@ -1,6 +1,4 @@
 <template>
-    <!-- TODO：loading - 骨架屏 -->
-    <!-- {{ userStore.userInfo }} -->
     <el-card style="max-width: 880px">
         <div v-if="ApiLoading === true">{{ $t('global.loading') }}</div>
         <el-descriptions v-else :column="1" border>

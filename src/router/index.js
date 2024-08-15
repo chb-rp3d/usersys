@@ -5,7 +5,6 @@ import { useGlobalStore } from '@/store/modules/global'
 import { ACCESS_TOKEN, langEnum, REFRESH_TOKEN } from '@/config/global'
 import { HASH_LOGIN, useLoginByToken } from '@/hooks/auth/useLoginForm'
 
-// TODO：404 没必要做
 const routes = [
   {
     path: '/',
@@ -80,7 +79,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // 客户端跳转过来，如果携带了语言和token，则设置语言和token
-  console.log(`%c>> $ to, from, next1`, 'color:yellow', to, from)
+  // console.log(`%c>> $ to, from, next1`, 'color:yellow', to, from)
   if (to.query?.lang && to.query?.access_token) {
     const globalStore = useGlobalStore()
     if (to.query?.lang !== langEnum.EN_US) {
@@ -91,7 +90,6 @@ router.beforeEach(async (to, from, next) => {
     const { lang, access_token, ...remainingQuery } = to.query
 
     const res = await useLoginByToken(to.query.access_token)
-    console.log(`%c>> $resresres`, 'color:yellow', res)
     if (res === 'success') {
       next({ path: '/home', query: remainingQuery })
     } else {
@@ -103,8 +101,8 @@ router.beforeEach(async (to, from, next) => {
 
   // 解析跳转过来携带的语言及
 
-  // TODO: 如果需要认证且没有 token，则重定向到登录页
-  // TODO: 如果跳转到 /login，但token有效，跳转到首页[通过token登录：LoginByToken]
+  // 如果需要认证且没有 token，则重定向到登录页
+  // 如果跳转到 /login，但token有效，跳转到首页[通过token登录：LoginByToken]
   if (to.meta.requiresAuth && !cookie_token) {
     next(`login#${HASH_LOGIN}`)
   } else {

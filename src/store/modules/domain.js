@@ -15,7 +15,7 @@ export const useDomainStore = defineStore('domain', {
       let domain = BASE_URL
       try {
         const { code, data } = await GetIP()
-        console.log(`%c>> 第一个接口：获取domain`, 'color:yellow', data)
+        // console.log(`%c>> 第一个接口：获取domain`, 'color:yellow', data)
         if (code === 200 && data?.domain) {
           // setBaseURL(data.domain)
           domain = data.domain

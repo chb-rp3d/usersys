@@ -1,22 +1,23 @@
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { getToken, openVn } from '@/utils/methods.js'
+import { getOsType } from '@/utils/sys.js'
 import { BASE_URL, PORT } from '@/config/global.js'
 import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
-import { getOsType, getToken, openVn } from '@/utils/methods.js'
 
 import { ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE } from '@/config/errCodeEnum'
 import { GET_IP_URL } from '@/api/global'
 
 const OS_Type = getOsType()
+
 const instance = axios.create({
   baseURL: BASE_URL, // 后台 API 接口地址
   timeout: 5000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json',
-    'x-revo-software': 'Test',
-    'x-revo-software-version': '1.0.0',
-    'x-revo-os-type': OS_Type, // TODO: getOsType
-    'x-revo-os-version': '11'
+    'x-revo-software': import.meta.env?.VITE_SOFT_NAME,
+    'x-revo-software-version': import.meta.env?.VITE_VERSION,
+    'x-revo-os-type': OS_Type?.os,
+    'x-revo-os-version': OS_Type?.osVersion
   }
 })
 
@@ -34,11 +35,8 @@ instance.interceptors.request.use(
     }
 
     console.log(`%c>> $请求拦截器-${config?.url}`, 'color:yellow', config)
-    let requireToken = true
-    if (config.requireToken === false) {
-      requireToken = false
-    }
-    if (requireToken) {
+    // 如果需要携带token，则从本地存储中获取token并添加到请求头中
+    if (config.requireToken !== false) {
       const token = getToken()
       config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -61,11 +59,11 @@ instance.interceptors.response.use(
     // 请求成功（与后端通信成功，但接口逻辑不一定正确，分别处理） && statusText === 'OK' ？？？
     const hasSuccess = status === 200 && data && Reflect.has(data, 'code')
     if (hasSuccess) {
-      console.log(`响应拦截器~~${config.url}`, 'color:yellow', response, data)
+      // console.log(`响应拦截器~~${config.url}`, 'color:yellow', response, data)
       if (data.code === 200) {
-        if (config.url === GET_IP_URL && data.data?.domain) {
-          setBaseURL(data.data.domain)
-        }
+        // if (config.url === GET_IP_URL && data.data?.domain) {
+        //   setBaseURL(data.data.domain)
+        // }
         if (withSuccessMsg === true) {
           openVn({ msg: `${config.url}请求成功`, type: 'success' })
         }
@@ -79,7 +77,7 @@ instance.interceptors.response.use(
           if ([ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE].indexOf(data.code) > -1) {
             console.log(`%c>> $`, 'color:yellow', errMsg, '过期重刷')
           }
-          console.log(errMsg)
+          // console.log(errMsg)
           if (errMsg) {
             openVn({ msg: errMsg, type: 'error' })
           } else {
@@ -102,7 +100,7 @@ instance.interceptors.response.use(
 
 // 提供一个方法来设置 baseURL
 export function setBaseURL(domain) {
-  console.log(`%c>> $`, 'color:yellow', domain)
+  // console.log(`%c>> $`, 'color:yellow', domain)
   // if(domain.indexOf('http') > -1) {
   //   instance.defaults.baseURL = `${domain}`;
   // } else {

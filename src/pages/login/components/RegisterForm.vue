@@ -138,16 +138,14 @@ const handleRegisterByEmail = async () => {
   if (selectedRegion?.domain) {
     options['__baseURL'] = `https://${selectedRegion.domain}`
   }
-  console.log(`%c>> $`, 'color:yellow', selectedRegion)
 
   const { code, data } = await RegisterByEmail(params, options)
-  console.log(`%c>> $ res`, 'color:yellow', data)
   loading.value = false
   if (code === 200 && data) {
     setCookie(ACCESS_TOKEN, data.accessToken)
     setCookie(REFRESH_TOKEN, data.refreshToken)
     // setLoginCache(data)
-    // TODO: 直接登录还是重新输密码登录
+    // 直接登录
     ElMessage({
       showClose: true,
       message: $t('login.toast__register_success'),
@@ -204,7 +202,6 @@ watch(() => registerForm.areaCode, (newVal, oldVal) => {
 })
 
 onMounted(() => {
-  console.log(`%c>> $router.currentRoute.valuesdfsdf撒旦发射点`, 'color:yellow', router.currentRoute.value)
   if(router.currentRoute.value.query.email) {
     registerForm.email = router.currentRoute.value.query.email
   }

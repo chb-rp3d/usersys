@@ -37,7 +37,7 @@ export function useLoginFormSetup() {
     [() => router.currentRoute.value.hash, () => domainStore.domain],
     ([newHash, newDomain]) => {
       // 监听路由变化，更新当前表单
-      console.log(`%c>> newHash, newDomain`, 'color:yellow', newHash, newDomain)
+      // console.log(`%c>> newHash, newDomain`, 'color:yellow', newHash, newDomain)
       if (newDomain) {
         formType.value = getFormFromHash(newHash)
         if (newHash === `#${HASH_REGISTER}` && AreaOptions.value.length === 0) {

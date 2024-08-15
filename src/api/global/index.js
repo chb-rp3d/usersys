@@ -17,7 +17,8 @@ export const GET_IP_URL = API.GetIP
 export function GetArea(locale = 'en_US') {
   return api.get(API.GetArea, {
     params: { locale },
-    withoutMsg: true
+    withoutMsg: true,
+    requireToken: false
   })
 }
 
@@ -25,12 +26,12 @@ export function GetArea(locale = 'en_US') {
  * @description: 获取IP
  */
 export function GetIP() {
-  return api.get(API.GetIP, { withoutMsg: true })
+  return api.get(API.GetIP, { withoutMsg: true, requireToken: false })
 }
 
 /**
  * @description: 获取邮箱-域名对应关系。不知道用户是哪个区的时候，才需要调这个接口，如登录、重置密码
  */
 export function GetEmailDomain(email) {
-  return api.post(API.GetEmailDomain, { email }, { withoutMsg: true })
+  return api.post(API.GetEmailDomain, { email }, { withoutMsg: true, requireToken: false })
 }

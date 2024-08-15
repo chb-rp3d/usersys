@@ -5,6 +5,10 @@ import ElementPlus from 'unplugin-element-plus/vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
+import dotenv from 'dotenv'
+
+// 加载 .env 文件
+dotenv.config()
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,7 +16,7 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer]
-    },
+    }
     // preprocessorOptions: {
     //   // 全局引入了 scss 的文件
     //   scss: {
@@ -39,5 +43,14 @@ export default defineConfig({
         // secure: false
       }
     }
-  }
+  },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
+  },
 })

@@ -26,24 +26,6 @@ export function base64ToString(base64Str) {
   }
   return decoder.decode(data) // 将 Uint8Array 解码为原始文本
 }
-/**
- * @returns {String} 操作系统类型[惰性求值]
- */
-
-export function getOsType() {
-  let cachedOsType = null
-
-  if (cachedOsType === null) {
-    const userAgent = navigator?.userAgent
-    if (userAgent.indexOf('Mac') > -1) {
-      return 'Mac'
-    } else if (userAgent.indexOf('Windows') > -1) {
-      return 'Windows'
-    }
-    return userAgent || 'Unknown' // 如果不是 Windows 或 Mac，则返回 Unknown
-  }
-  return cachedOsType
-}
 
 /**
  * @description: 获取token。过期重刷
@@ -52,10 +34,6 @@ export function getOsType() {
  */
 
 export function getToken(type) {
-  if (type) {
-    console.log(`%c>> $`, 'color:yellow', '请提供token的类别')
-    return
-  }
   // 检查 token 是否可用
   try {
     // 获取 token
@@ -81,7 +59,7 @@ export function getToken(type) {
  * @param {Number} days 失效时间
  */
 export function setCookie(name, value, days = 30) {
-  console.log(`%c>> $`, 'color:yellow', name, value, days)
+  // console.log(`%c>> $`, 'color:yellow', name, value, days)
   var expires = ''
   if (days) {
     var date = new Date()

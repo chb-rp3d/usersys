@@ -21,28 +21,28 @@ const API = {
  * @description: 获取图形验证码
  */
 export function GetImgCaptcha() {
-  return api.get(API.GetImgCaptcha, { withoutMsg: true })
+  return api.get(API.GetImgCaptcha, { params: { t: Date.now() }, withoutMsg: true, requireToken: false })
 }
 
 /**
  * @description: 获取邮箱验证码 register-注册，reset_password-重置密码
  */
 export function GetEmailCode(params = {}, options = {}) {
-  return api.post(API.GetEmailCode, { ...params }, { ...options, withoutMsg: true })
+  return api.post(API.GetEmailCode, { ...params }, { ...options, withoutMsg: true, requireToken: false })
 }
 
 /**
  * @description: 用户注册
  */
 export function RegisterByEmail(params = {}, options = {}) {
-  return api.post(API.RegisterByEmail, { ...params }, { ...options })
+  return api.post(API.RegisterByEmail, { ...params }, { ...options, requireToken: false })
 }
 /**
  * @description: 邮箱密码登录 [先获取 domain]
  */
 export async function LoginByEmail(params = {}, options = {}) {
   try {
-    const { code, data } = await GetEmailDomain(params.email, { withFailedMsg: true })
+    const { code, data } = await GetEmailDomain(params.email, { withFailedMsg: true, requireToken: false })
     if (code === 200 && !!data) {
       return api.post(API.LoginByEmail, { ...params }, { ...options, __baseURL: `https://${data.domain}` })
     } else {
@@ -61,12 +61,12 @@ export async function LoginByEmail(params = {}, options = {}) {
  * @params {String} temporaryToken 临时凭证
  */
 export function LoginByToken(params = {}, options = {}) {
-  return api.post(API.LoginByToken, { ...params }, { ...options })
+  return api.post(API.LoginByToken, { ...params }, { ...options, requireToken: false })
 }
 
 /**
  * @description: 刷新用户令牌: 旧token换新token
  */
 export function RefreshToken(params = {}, options = {}) {
-  return api.post(API.RefreshToken, { ...params }, { ...options })
+  return api.post(API.RefreshToken, { ...params }, { ...options, requireToken: false })
 }
