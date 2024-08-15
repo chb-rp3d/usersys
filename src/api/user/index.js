@@ -15,7 +15,7 @@ const API = {
  * @description: 获取用户信息
  */
 export function GetUserInfo() {
-  return api.get(API.GetUserInfo, { withoutMsg: true })
+  return api.get(API.GetUserInfo)
 }
 /**
  * @description: 重置密码，忘记密码

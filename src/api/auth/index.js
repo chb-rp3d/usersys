@@ -21,14 +21,14 @@ const API = {
  * @description: 获取图形验证码
  */
 export function GetImgCaptcha() {
-  return api.get(API.GetImgCaptcha, { params: { t: Date.now() }, withoutMsg: true, requireToken: false })
+  return api.get(API.GetImgCaptcha, { params: { t: Date.now() }, requireToken: false })
 }
 
 /**
  * @description: 获取邮箱验证码 register-注册，reset_password-重置密码
  */
 export function GetEmailCode(params = {}, options = {}) {
-  return api.post(API.GetEmailCode, { ...params }, { ...options, withoutMsg: true, requireToken: false })
+  return api.post(API.GetEmailCode, { ...params }, { ...options, requireToken: false })
 }
 
 /**
@@ -42,9 +42,9 @@ export function RegisterByEmail(params = {}, options = {}) {
  */
 export async function LoginByEmail(params = {}, options = {}) {
   try {
-    const { code, data } = await GetEmailDomain(params.email, { withFailedMsg: true, requireToken: false })
+    const { code, data } = await GetEmailDomain(params.email, { withFailedMsg: true })
     if (code === 200 && !!data) {
-      return api.post(API.LoginByEmail, { ...params }, { ...options, __baseURL: `https://${data.domain}` })
+      return api.post(API.LoginByEmail, { ...params }, { ...options, __baseURL: `https://${data.domain}`, requireToken: false })
     } else {
       // const errMsg = ERROR_CODE_ENUM[code]
       // if (errMsg) {
