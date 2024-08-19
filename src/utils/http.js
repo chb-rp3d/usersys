@@ -1,11 +1,13 @@
 import axios from 'axios'
-import { getToken, openVn } from '@/utils/methods.js'
+import { deleteCookie, getToken, openVn } from '@/utils/methods.js'
 import { getOsType } from '@/utils/sys.js'
-import { BASE_URL, PORT } from '@/config/global.js'
-import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
+import { ACCESS_TOKEN, BASE_URL, REFRESH_TOKEN } from '@/config/global.js'
+import { ENUM_ACCOUNT_FORBIDDEN, ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
 
 import { ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE } from '@/config/errCodeEnum'
 import { GET_IP_URL } from '@/api/global'
+import { HASH_LOGIN } from '@/hooks/auth/useLoginForm'
+import router from '@/router'
 
 const OS_Type = getOsType()
 
@@ -69,6 +71,13 @@ instance.interceptors.response.use(
         }
       } else {
         const errMsg = ERROR_CODE_ENUM[data.code]
+        // 104002 ACCOUNT_FORBIDDEN	此账号已被禁用 [清除登录状态，跳转登录]
+        if([ENUM_ACCOUNT_FORBIDDEN].indexOf(data.code) > -1) {
+          router.replace(`/login#${HASH_LOGIN}`)
+          // 清除cookie
+          deleteCookie(ACCESS_TOKEN)
+          deleteCookie(REFRESH_TOKEN)
+        }
         if (withFailedMsg === true && errMsg) {
           // token过期重刷
           // 104004	TEMP_TOKEN_EXPIRE	临时token不存在或已过期

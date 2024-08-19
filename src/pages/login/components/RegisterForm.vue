@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="registerForm" ref="RegisterFormRef" label-width="auto" label-position="left"
+  <el-form :model="registerForm" ref="RegisterFormRef" label-width="100px" label-position="left"
     :rules="rulesRegisterForm" style="padding: 30px">
     <h5>
       {{ $t('login.has_account') }}
@@ -13,7 +13,7 @@
       <el-select v-model="registerForm.areaCode" :placeholder="$t('login.placeholder__region')" filterable>
         <el-option v-for="item in AreaOptions" :key="item.areaCode" :label="item.areaName" :value="item.areaCode" />
       </el-select>
-      <div style="color: red">{{ $t('login.tip__region') }}</div>
+      <div class="tw-leading-4" style="color: red">{{ $t('login.tip__region') }}</div>
     </el-form-item>
     <el-form-item :label="$t('login.label__email')" required prop="email">
       <el-input v-model="registerForm.email" type="email" />

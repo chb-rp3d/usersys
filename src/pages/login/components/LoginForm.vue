@@ -68,7 +68,8 @@ const GlobalStore = useGlobalStore()
 
 const textStyle = {
   fontSize: '12px',
-  color: '#666'
+  color: '#666',
+  whiteSpace: 'break-spaces'
 }
 
 const loginForm = reactive({

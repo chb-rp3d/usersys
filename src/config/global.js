@@ -27,5 +27,16 @@ export const PRIVACY_POLICY_CN = 'https://www.revopoint3d.com.cn/privacy-policy/
 // 语言枚举
 export const langEnum = {
   EN_US: 'en_US',
-  ZH_CN: 'zh_CN'
+  ZH_CN: 'zh_CN',
+  ZH_TW: 'zh_TW',
+
+  FR_FR: 'fr_FR',
+  DE_DE: 'de_DE',
+  IT_IT: 'it_IT',
+  ES_ES: 'es_ES',
+  KO_KR: 'ko_KR',
+  RU_RU: 'ru_RU',
+  PT_BR: 'pt_BR',
+  TR_TR: 'tr_TR',
+  JA: 'ja'
 }
