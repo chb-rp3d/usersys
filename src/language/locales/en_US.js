@@ -1,6 +1,6 @@
 export default {
   global: {
-    btn__conform: 'Confirm / OK',
+    btn__conform: 'Confirm',
     btn__cancel: 'Cancel',
     loading: 'Loading...',
     placeholder: 'Please enter {0}',
