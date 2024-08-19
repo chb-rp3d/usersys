@@ -8,9 +8,10 @@
         :placeholder="$t('login.placeholder__pwd')" />
     </el-form-item>
 
-    <el-form-item required prop="password" class="form-forgetPwd">
-      <el-button link type="primary" @click="emit('change-form-type', 'forgetPwd')">{{ $t('login.forget_pwd')
-        }}</el-button>
+    <el-form-item class="form-forgetPwd">
+      <el-button link type="primary" @click="emit('change-form-type', 'forgetPwd')">
+        {{ $t('login.forget_pwd') }}
+      </el-button>
     </el-form-item>
 
     <el-form-item required style="margin-bottom: 0;">
@@ -30,7 +31,7 @@
       </template>
     </el-popover>
 
-    <el-form-item style="padding-top: 20px;">
+    <el-form-item class="tw-pt-2 el-form-item__mb-small">
       <el-button type="primary" @click="handleSubmitForm(loginFormRef)" v-click-outside="onClickOutside"
         style="width: 100%">
         {{ $t('login.btn__login') }}
@@ -92,7 +93,7 @@ const loginFormRules = reactive({
   password: {
     validator: (rule, value, callback) => {
       if (!REG_PWD.test(value)) {
-        callback(new Error(t('login.valid__ticket_require')))
+        callback(new Error(t('login.placeholder__pwd')))
       } else {
         callback()
       }

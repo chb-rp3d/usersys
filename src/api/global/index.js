@@ -12,7 +12,7 @@ const API = {
 export const GET_IP_URL = API.GetIP
 
 /**
- * @description: 获取地区列表(含域名) locale
+ * @description: 获取地区列表(含域名) locale TODO: 需要知道最终部署的域名
  */
 export function GetArea(locale = 'en_US') {
   return api.get(API.GetArea, {

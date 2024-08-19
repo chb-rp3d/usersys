@@ -5,7 +5,7 @@
       <Header :icon="icon" @toggle="handleToggle"></Header>
     </el-header>
     <el-container style="height: calc(100vh - 71px);">
-      <el-aside v-if="!isSmall" :width="aside_witdh" :style="computedAsideStyle">
+      <el-aside v-if="!isSmall" :width="aside_width" :style="computedAsideStyle">
         <Aside :activeIndex="activeIndex" :isAsideShow="isAsideShow"></Aside>
       </el-aside>
       <el-drawer v-else v-model="isAsideShow" :direction="'ltr'" :with-header="false" size="60%">
@@ -33,16 +33,18 @@ import Header from "./components/Header.vue";
 import { reactive, toRefs, onActivated } from "vue"
 import { useWindowSize } from '@vueuse/core'
 import router from '@/router'
+import { useGlobalStore } from '@/store/modules/global';
 const V = import.meta.env?.VITE_VERSION
 
 const { width } = useWindowSize()
+const globalStore = useGlobalStore()
 
 const isAsideShow = ref(false)
 const activeIndex = ref('/home')
 
 const data = reactive({
   isCollapse: false,
-  aside_witdh: '200px',
+  aside_width: '200px',
   icon: 'Fold'
 })
 
@@ -58,6 +60,11 @@ watch(
   }
 )
 
+onMounted(() => {
+  if (globalStore.globalArea?.length === 0) {
+    globalStore.getGlobalArea()
+  }
+})
 const computedAsideStyle = computed(() => {
   const base = {
     // height: 'calc(100vh - 71px)',
@@ -99,20 +106,7 @@ const isSmall = computed(() => {
   return width.value <= 768
 })
 
-
-const doCollapse = () => {
-  data.isCollapse = !data.isCollapse
-  if (!data.isCollapse) {// 展开
-    data.aside_witdh = '200px'
-    data.icon = 'Fold'
-  } else {//关起、关闭、收起
-    data.aside_witdh = '64px'
-    data.icon = 'Expand'
-  }
-}
-
-
-const { isCollapse, aside_witdh, icon } = toRefs(data)
+const { aside_width, icon } = toRefs(data)
 </script>
 
 <style scoped>

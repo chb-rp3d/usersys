@@ -21,7 +21,7 @@
     <el-form-item :label="$t('login.label__password')" required prop="password">
       <el-input v-model="registerForm.password" type="password" show-password />
     </el-form-item>
-    <el-form-item :label="$t('login.label__email_code')" required prop="ticketCode" class="el-form-item__nowrap">
+    <el-form-item :label="$t('login.label__email_code')" required prop="ticketCode" class="el-form-item__nowrap el-form-item__mb-small">
       <el-input v-model="registerForm.ticketCode" type="ticketCode" />
       <el-button v-if="!isCounting" @click="_handleGetEmailCode"> {{ $t('login.btn__email_code') }} </el-button>
       <el-button v-else :disabled="isCounting"> {{ timeRemaining }} s </el-button>

@@ -79,6 +79,11 @@ export function generateDistFolderName() {
   const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
   let counter = 1;
 
+  // 确保 dist 文件夹存在
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir, { recursive: true });
+  }
+
   // 获取所有匹配格式的文件夹名称
   const existingFolders = fs.readdirSync(baseDir)
     .filter(folder => folder.startsWith(`dist-${today}`))

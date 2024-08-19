@@ -54,9 +54,9 @@ const handleDelAccount = async () => {
   // 弹窗确认
   ElMessageBox.prompt(
     t('account.placeholder__delete_account'),
-    t('account.delete_account_title'),
+    t('global.placeholder', [t('account.old_password')]),
     {
-      confirmButtonText: t('global.btn__ok'),
+      confirmButtonText: t('global.btn__conform'),
       cancelButtonText: t('global.btn__cancel'),
       inputPattern: REG_PWD,
       inputType: 'password',

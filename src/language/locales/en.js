@@ -59,7 +59,6 @@ export default {
   account: {
     logout: '退出登录',
     user_id: '用户id',
-    user_region: '地区',
     valid__password_not_same: '两次新密码不一致',
     valid__password_same: '新旧密码一样',
     old_password: '旧密码',
@@ -68,7 +67,6 @@ export default {
     placeholder__delete_account: '请输入密码',
     change_password: '修改密码',
     delete_account: '注销账号',
-    delete_account_title: '注销账号',
     logout_success: '退出成功',
     update_password_success: '更新密码成功',
     logout_is_sure: '是否要退出登陆?'

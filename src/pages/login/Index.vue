@@ -5,9 +5,9 @@
         <h3 class="login-title">{{ formTitle }}</h3>
 
         <!-- <Transition name="slide-right-left"> </Transition>-->
-        <LoginForm v-show="formType === HASH_LOGIN" @change-form-type="handleFormType" />
-        <RegisterForm v-show="formType === HASH_REGISTER" @change-form-type="handleFormType" />
-        <ForgetPasswordForm v-show="formType === HASH_FORGET_PWD" @change-form-type="handleFormType" />
+        <LoginForm v-if="formType === HASH_LOGIN" @change-form-type="handleFormType" />
+        <RegisterForm v-if="formType === HASH_REGISTER" @change-form-type="handleFormType" />
+        <ForgetPasswordForm v-if="formType === HASH_FORGET_PWD" @change-form-type="handleFormType" />
       </div>
     </div>
   </div>
@@ -91,6 +91,14 @@ body {
   position: absolute;
   top: 25px;
   left: 25px; */
+}
+
+:deep(.el-form-item) {
+  margin-bottom: 26px;
+}
+
+:deep(.el-form-item.el-form-item__mb-small) {
+  margin-bottom: 16px;
 }
 
 :deep(.el-form-item__label-wrap) {

@@ -7,7 +7,6 @@ import router from '@/router'
 // import { useRouter, useRoute } from 'vue-router'
 import { GetImgCaptcha, GetEmailCode, LoginByToken, RefreshToken } from '@/api/auth'
 import { Unregister } from '@/api/user'
-import { GetArea } from '@/api/global'
 import { string2Base64, deleteCookie, getCookie, setCookie } from '@/utils/methods'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
@@ -18,6 +17,7 @@ export const HASH_REGISTER = 'register'
 export const HASH_FORGET_PWD = 'forgetPwd'
 import { useDomainStore } from '@/store/modules/domain'
 import { useUserStore } from '@/store/modules/user'
+import { useGlobalStore } from '@/store/modules/global'
 
 // login | register | forgetPwd
 export const formType = ref(HASH_REGISTER)
@@ -41,7 +41,7 @@ export function useLoginFormSetup() {
       if (newDomain) {
         formType.value = getFormFromHash(newHash)
         if (newHash === `#${HASH_REGISTER}` && AreaOptions.value.length === 0) {
-          getGetArea()
+          getArea()
         }
         if (['#register', '#forgetPwd'].indexOf(newHash) > -1) {
           getImgCaptchaUrl()
@@ -75,13 +75,14 @@ export const handleFormType = (type) => {
 // 地区
 export const AreaOptions = ref([])
 // 获取地区选项
-const getGetArea = async () => {
+const getArea = async () => {
+  const globalStore = useGlobalStore()
+  // console.log(`%c>> $`, 'color:yellow', globalStore)
   // 有则不用重复请求
   if (Object.keys(AreaOptions.value)?.length > 0) {
     return
   }
-  const { data } = await GetArea()
-  console.log(`GetArea`, data)
+  const data = await globalStore?.getGlobalArea()
   AreaOptions.value = data
 }
 

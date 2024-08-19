@@ -35,7 +35,7 @@ const emits = defineEmits(['toggle'])
 const logout = () => {
     console.log('logout')
     ElMessageBox.confirm(t('account.logout_is_sure'), t('account.logout'), {
-        confirmButtonText: t('global.btn__ok'),
+        confirmButtonText: t('global.btn__conform'),
         cancelButtonText: t('global.btn__cancel'),
         type: 'warning'
     })
