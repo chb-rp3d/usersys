@@ -107,10 +107,6 @@ export const getImgCaptchaUrl = async () => {
 export const handleGetEmailCode = async (params) => {
   const res = GetEmailCode(params)
   console.log(`%c>> $ GetEmailCode`, 'color:yellow', res)
-  ElMessage({
-    type: 'success',
-    message: $t('login.toast__code_send')
-  })
 }
 
 // **************
@@ -160,10 +156,6 @@ export const useLoginByToken = async (temporaryToken) => {
   if (code === 200 && data) {
     setLoginCache(data)
     return 'success'
-    // ElMessage({
-    //   type: 'success',
-    //   message: '登录成功'
-    // })
   }
 }
 
@@ -192,7 +184,7 @@ export const handleDeleteAccountConform = async (pwd) => {
 
     ElMessage({
       type: 'success',
-      message: `注销成功`
+      message: $t("account.logout_success")
     })
   }
 }

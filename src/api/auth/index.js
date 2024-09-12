@@ -27,7 +27,7 @@ export function GetImgCaptcha() {
  * @description: 获取邮箱验证码 register-注册，reset_password-重置密码
  */
 export function GetEmailCode(params = {}, options = {}) {
-  return api.post(API.GetEmailCode, { ...params }, { ...options, requireToken: false })
+  return api.post(API.GetEmailCode, { ...params }, { ...options, withFailedMsg: true, requireToken: false })
 }
 
 /**
