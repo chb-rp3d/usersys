@@ -3,7 +3,7 @@
  */
 import { createI18n } from 'vue-i18n'
 
-import ZH_CN from './locales/ko_KR'
+import ZH_CN from './locales/zh_CN'
 import ZH_TW from './locales/zh_TW'
 import EN_US from './locales/en_US'
 

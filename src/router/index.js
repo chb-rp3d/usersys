@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/pages/login/Index.vue'),
+    component: () => import('@/pages/login/Login.vue'),
     meta: {
       title: 'Revopoint 账号-登录'
     },
@@ -71,7 +71,7 @@ const router = createRouter({
  * 2. 第一次语言检查【和cookie对比】
  */
 router.beforeEach(async (to, from, next) => {
-  document.title = to.meta.title || 'Revopoint 账号'
+  document.title = to.meta.title || 'Revopoint'
 
   const cookie_token = getCookie('ACCESS_TOKEN')
   if (to.fullPath === '/') {

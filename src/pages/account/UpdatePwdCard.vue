@@ -1,5 +1,7 @@
 <template>
-  <el-button @click="emit('change-card-type', 'main');" style="margin-bottom: 16px;">返回</el-button>
+  <el-button @click="emit('change-card-type', 'main');" style="margin-bottom: 16px;">
+    <el-icon><ArrowLeft /></el-icon>
+  </el-button>
   <el-form :model="updatePwdForm" ref="updatePwdFormRef" :rules="updatePwdFormRules" style="max-width: 500px;">
     <el-form-item required prop="oldPassword">
       <el-input v-model="updatePwdForm.oldPassword" type="password" show-password
@@ -112,4 +114,8 @@ const handleSubmitForm = async (formEl) => {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(.el-form-item) {
+  margin-bottom: 36px;
+}
+</style>

@@ -3,7 +3,7 @@
         <!--菜单伸缩-->
         <div class="tw-flex tw-items-center tw-gap-4">
             <el-avatar shape="square" :size="50" fit="contain" :src="avatarIcon" style=" background-color: #fff; padding: 2px;"></el-avatar>
-            <span class="tw-text-[1rem] tw-weight-bold">Revopoint 账号</span>
+            <span v-if="width > 600 " class="tw-text-[1rem] tw-weight-bold">Revopoint</span>
             <div class="md:tw-hidden tw-text-[20px] tw-flex tw-items-center" @click="emits('toggle')">
                 <el-icon class="tw-cursor-pointer">
                     <Expand />
@@ -11,6 +11,7 @@
             </div>
         </div>
         <div class="tw-flex tw-justify-end tw-items-center tw-gap-4 tw-flex-1">
+            <LangSelect />
             <el-button link type="primary" @click.native="logout">{{ $t('account.logout') }}</el-button>
         </div>
     </div>
@@ -24,6 +25,10 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { deleteCookie } from "@/utils/methods";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/config/global";
 import { HASH_LOGIN } from "@/hooks/auth/useLoginForm";
+import LangSelect from "@/components/account/LangSelect.vue";
+import { useWindowSize } from '@vueuse/core'
+
+const { width } = useWindowSize()
 const { t } = useI18n()
 
 const props = defineProps({

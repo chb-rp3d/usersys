@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, unref, computed, onMounted } from 'vue'
+import { reactive, ref, unref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useI18n } from 'vue-i18n'
@@ -60,7 +60,6 @@ import { cacheUserNameAndPwd, getCacheUserNameAndPwd, setLoginCache } from '@/ho
 import { useGlobalStore } from '@/store/modules/global'
 
 import { submitForm } from '@/hooks/auth/useLoginForm'
-import { ERROR_CODE_ENUM } from '@/config/errCodeEnum'
 const emit = defineEmits(['change-form-type']);
 
 const { t } = useI18n()
@@ -120,6 +119,12 @@ onMounted(() => {
   }
 })
 
+watch(() => GlobalStore.lang, (newVal, oldVal) => {
+  if(newVal != oldVal) {
+    loginFormRef.value.resetFields()
+  }
+})
+
 const onClickOutside = () => {
   allowPOPoRefVisible.value = false;
 }
@@ -156,16 +161,6 @@ const handleLogin = async () => {
       message: t('login.msg__success'),
       type: 'success'
     })
-  } else {
-    const errMsg = ERROR_CODE_ENUM[code]
-    if (errMsg) {
-      openVn({ msg: errMsg, type: 'error' })
-    }
-    // ElMessage({
-    //   showClose: true,
-    //   message: t('login.failed'),
-    //   type: 'error'
-    // })
   }
 }
 

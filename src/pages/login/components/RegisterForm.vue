@@ -3,25 +3,27 @@
     :rules="rulesRegisterForm" style="padding: 30px">
     <h5>
       {{ $t('login.has_account') }}
-      <span @click="() => emit('change-form-type', 'login')" style="color: var(--el-color-primary-light-3); cursor: pointer">
+      <span @click="() => emit('change-form-type', 'login')"
+        style="color: var(--el-color-primary-light-3); cursor: pointer">
         {{ $t('login.btn__login') }}
       </span>
     </h5>
-    <ElDivider />
+    <el-divider />
 
     <el-form-item :label="$t('login.label__region')" required prop="areaCode">
-      <el-select v-model="registerForm.areaCode" :placeholder="$t('login.placeholder__region')" filterable>
-        <el-option v-for="item in AreaOptions" :key="item.areaCode" :label="item.areaName" :value="item.areaCode" />
+      <el-select :no-match-text="$t('login.no_result')" :no-data-text="$t('login.no_data_retry')" v-model="registerForm.areaCode" :placeholder="$t('login.placeholder__region')" filterable>
+        <el-option v-for="item in GlobalStore.globalArea" :key="item.areaCode" :label="item.areaName" :value="item.areaCode" />
       </el-select>
       <div class="tw-leading-4" style="color: red">{{ $t('login.tip__region') }}</div>
     </el-form-item>
     <el-form-item :label="$t('login.label__email')" required prop="email">
       <el-input v-model="registerForm.email" type="email" />
     </el-form-item>
-    <el-form-item :label="$t('login.label__password')" required prop="password">
+    <el-form-item :label="$t('login.label__password')" required prop="password" class="tw-pb-6">
       <el-input v-model="registerForm.password" type="password" show-password />
     </el-form-item>
-    <el-form-item :label="$t('login.label__email_code')" required prop="ticketCode" class="el-form-item__nowrap el-form-item__mb-small">
+    <el-form-item :label="$t('login.label__email_code')" required prop="ticketCode"
+      class="el-form-item__nowrap el-form-item__mb-small">
       <el-input v-model="registerForm.ticketCode" type="ticketCode" />
       <el-button v-if="!isCounting" @click="_handleGetEmailCode"> {{ $t('login.btn__email_code') }} </el-button>
       <el-button v-else :disabled="isCounting"> {{ timeRemaining }} s </el-button>
@@ -35,9 +37,14 @@
     <el-form-item :label="$t('login.label__img_code')" required prop="captchaCode" class="el-form-item__nowrap">
       <el-input v-model="registerForm.captchaCode" />
       <div class="img-captcha-wrap" @click="getImgCaptchaUrl">
-        <!-- <el-skeleton-item variant="image" style="width: 100px; height: 40px" /> -->
         <div v-if="imgCaptcha.loading">{{ $t('global.loading') }}</div>
-        <el-skeleton-item v-else-if="!imgCaptcha.imgUrl" variant="h3" style="width: 100px" />
+        <el-skeleton v-else-if="!imgCaptcha.imgUrl" style="width: 100px" :loading="true" animated>
+          <template #template>
+            <div style="padding: 14px">
+              <el-skeleton-item variant="p" />
+            </div>
+          </template>
+        </el-skeleton>
         <img v-else :src="imgCaptcha.imgUrl" :alt="$t('login.label__img_code')" />
       </div>
     </el-form-item>
@@ -56,7 +63,7 @@
 <script setup>
 import { reactive, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useIntervalFn } from '@vueuse/core'
-import { ElDivider, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { string2Base64, setCookie } from '@/utils/methods'
 
@@ -65,10 +72,12 @@ import { REG_EMAIL, REG_PWD } from '@/config/reg'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 import { $t } from '@/language/index'
 import { useDomainStore } from '@/store/modules/domain'
+import { useGlobalStore } from '@/store/modules/global'
 
 import { AreaOptions, imgCaptcha, getImgCaptchaUrl, handleGetEmailCode, submitForm } from '@/hooks/auth/useLoginForm'
 
 const domainStore = useDomainStore()
+const GlobalStore = useGlobalStore()
 const emit = defineEmits(['change-form-type']);
 
 // 注册按钮loading
@@ -85,7 +94,7 @@ const registerForm = reactive({
 })
 // 表单校验规则(只要指定prop和添加required即可校验 但要自定义校验需要rules)
 const rulesRegisterForm = reactive({
-  areaCode: [{ required: true, message: '请选择地区', trigger: 'blur' }],
+  areaCode: [{ required: true, message: () => $t('login.placeholder__region'), trigger: 'blur' }],
   email: {
     validator: (rule, value, callback) => {
       // console.log(`%c>> $`, 'color:yellow', rule, value)
@@ -113,10 +122,10 @@ const rulesRegisterForm = reactive({
     trigger: ['blur']
   },
   ticketCode: [
-    { required: true, message: $t('login.tip__empty', [$t('login.label__email_code')]), trigger: 'blur' },
-    { min: 6, max: 6, message: $t('login.valid__ticket_length_6'), trigger: 'blur' }
+    { required: true, message: () => $t('login.tip__empty', [$t('login.label__email_code')]), trigger: 'blur' },
+    { min: 6, max: 6, message: () => $t('login.valid__ticket_length_6'), trigger: 'blur' }
   ],
-  captchaCode: [{ required: true, message: $t('login.tip__empty', [$t('login.label__img_code')]), trigger: 'blur' }]
+  captchaCode: [{ required: true, message: () => $t('login.tip__empty', [$t('login.label__img_code')]), trigger: 'blur' }]
 })
 
 // 通过邮箱注册
@@ -133,10 +142,10 @@ const handleRegisterByEmail = async () => {
   }
 
   // 找到 domain
-  const selectedRegion = AreaOptions.value.find(item => item.areaCode === areaCode)
+  const selectedRegion = GlobalStore.globalArea.find(item => item.areaCode === areaCode)
   let options = {}
   if (selectedRegion?.domain) {
-    options['__baseURL'] = `https://${selectedRegion.domain}`
+    options['__baseURL'] = `${location?.protocol || 'https:'}//${selectedRegion.domain}`
   }
 
   const { code, data } = await RegisterByEmail(params, options)
@@ -153,11 +162,9 @@ const handleRegisterByEmail = async () => {
     })
     router.replace('/home')
   } else {
-    // ElMessage({
-    //   showClose: true,
-    //   message: '账号密码错误',
-    //   type: 'error'
-    // })
+    // 为避免图形验证码过期或者已经被消费，注册错误后，重刷图形验证码
+    registerForm.captchaCode = ''
+    getImgCaptchaUrl()
   }
 }
 
@@ -176,25 +183,28 @@ const _handleGetEmailCode = async () => {
   })
 }
 
-watch(() => registerForm.areaCode, (newVal, oldVal) => {
-  if (newVal !== oldVal) {
-    router.currentRoute.value.query['email'] += '1'
-    const selectedRegion = AreaOptions.value.find(item => item.areaCode === newVal)
-    console.log(`%c>> $newVal, oldVal`, 'color:yellow', newVal, selectedRegion, domainStore.domain, router.currentRoute.value, `https://${selectedRegion.domain}${router.currentRoute.value.fullPath}`)
-    if (!!domainStore.domain && domainStore.domain != selectedRegion.domain) {
+watch(() => GlobalStore.lang, (newVal, oldVal) => {
+  if(newVal != oldVal) {
+    RegisterFormRef.value.resetFields()
+  }
+})
+
+watch([() => registerForm.areaCode, () => GlobalStore.globalArea], ([newAreaCode, newGlobalArea], oldVal) => {
+  if (newGlobalArea?.length > 0 && newAreaCode !== oldVal?.[0]) {
+    const selectedRegion = GlobalStore.globalArea.find(item => item.areaCode === newAreaCode)
+    console.log(`%c>> $newVal, oldVal`, 'color:yellow', newAreaCode, selectedRegion, domainStore.domain, router.currentRoute.value)
+    if (!!domainStore.domain && (domainStore.domain != selectedRegion.domain)) {
       // 获取当前路由信息
       const currentRoute = router.currentRoute.value;
       const fullPath = currentRoute.fullPath;
       // 构建新的 URL
-      const newUrl = new URL(`https://${selectedRegion.domain}${fullPath}`);
+      const newUrl = new URL(`${location?.protocol || 'https:'}//${selectedRegion.domain}${fullPath}`);
 
       if (registerForm.email) {
-
         // 添加额外的查询参数
-        newUrl.searchParams.set('email', 'bb@qq.com');
-
+        newUrl.searchParams.set('email', registerForm.email);
       }
-      // 使用 window.location.replace 或 window.location.assign 来导航到新 URL
+      newUrl.searchParams.set('region', newAreaCode); // 带上已选择的地区，自动填充
       window.location.replace(newUrl.toString());
       // window.location.href = `https://${selectedRegion.domain}${router.currentRoute.value.fullPath}`
     }
@@ -202,8 +212,12 @@ watch(() => registerForm.areaCode, (newVal, oldVal) => {
 })
 
 onMounted(() => {
-  if(router.currentRoute.value.query.email) {
+  console.log(`%c>> $router.currentRoute`, 'color:yellow', router.currentRoute.value)
+  if (router.currentRoute.value.query.email) {
     registerForm.email = router.currentRoute.value.query.email
+  }
+  if (router.currentRoute.value.query.region) {
+    registerForm.areaCode = router.currentRoute.value.query.region
   }
 })
 

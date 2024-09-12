@@ -1,5 +1,8 @@
 <template>
   <div class="loginBody">
+    <div class="tw-absolute tw-top-4 tw-right-4">
+      <LangSelect />
+    </div>
     <div class="loginDiv">
       <div class="login-content">
         <h3 class="login-title">{{ formTitle }}</h3>
@@ -10,6 +13,8 @@
         <ForgetPasswordForm v-if="formType === HASH_FORGET_PWD" @change-form-type="handleFormType" />
       </div>
     </div>
+
+    <CookieAllow />
   </div>
 </template>
 
@@ -19,6 +24,8 @@ import { useI18n } from 'vue-i18n'
 import LoginForm from './components/LoginForm.vue'
 import RegisterForm from './components/RegisterForm.vue'
 import ForgetPasswordForm from './components/ForgetPasswordForm.vue'
+import LangSelect from '@/components/account/LangSelect.vue'
+import CookieAllow from '@/components/account/CookieAllow.vue'
 
 import {
   HASH_LOGIN,
@@ -37,12 +44,12 @@ useLoginFormSetup()
 
 // a computed ref
 const titleCfg = {
-  login: t('login.title__login'),
-  register: t('login.title__register'),
-  forgetPwd: t('login.title__forget_password')
+  login: 'login.title__login',
+  register: 'login.title__register',
+  forgetPwd: 'login.title__forget_password'
 }
 const formTitle = computed(() => {
-  return titleCfg[formType.value]
+  return t(titleCfg[formType.value])
 })
 </script>
 
@@ -70,7 +77,7 @@ body {
   left: 50%;
   margin-top: -300px;
   margin-left: -225px; */
-  width: 450px;
+  width: 540px;
   /* height: -webkit-fill-available; */
   // background: #fff;
   border-radius: 1rem;
@@ -111,15 +118,18 @@ body {
 
   .img-captcha-wrap {
     min-width: 83px;
+
     img {
       cursor: pointer;
       display: block
     }
   }
 }
+
 :deep(.el-input__inner) {
   color: #444;
 }
+
 :deep(.el-input__wrapper) {
   box-shadow: 0 0 0 1px #ccc inset;
 }

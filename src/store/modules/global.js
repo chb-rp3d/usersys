@@ -24,7 +24,12 @@ export const useGlobalStore = defineStore('global', {
     async getGlobalArea() {
       try {
         const domain = useDomainStore()?.domain
-        const local = domain?.indexOf('.cn.') > -1 ? langEnum.ZH_CN : langEnum.EN_US
+        const local =
+          domain?.indexOf('.cn.') > -1
+            ? langEnum.ZH_CN
+            : Object.values(langEnum).includes(this.lang)
+            ? this.lang
+            : langEnum.EN_US
         const { code, data } = await GetArea(local)
         if (code === 200 && data) {
           this.globalArea = data

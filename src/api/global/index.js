@@ -31,6 +31,6 @@ export function GetIP() {
 /**
  * @description: 获取邮箱-域名对应关系。不知道用户是哪个区的时候，才需要调这个接口，如登录、重置密码
  */
-export function GetEmailDomain(email) {
-  return api.post(API.GetEmailDomain, { email }, { requireToken: false })
+export function GetEmailDomain(email, options={}) {
+  return api.post(API.GetEmailDomain, { email }, { ...options, requireToken: false })
 }

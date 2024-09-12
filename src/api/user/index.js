@@ -21,17 +21,17 @@ export function GetUserInfo() {
  * @description: 重置密码，忘记密码
  */
 export function ResetPwd(params = {}, options = {}) {
-  return api.post(API.ResetPwd, { ...params }, { ...options, requireToken: false })
+  return api.post(API.ResetPwd, { ...params }, { ...options, requireToken: false, withFailedMsg: true, })
 }
 /**
  * @description: 修改登录密码
  */
 export function ModifyPwd(params = {}, options = {}) {
-  return api.post(API.ModifyPwd, { ...params }, { ...options })
+  return api.post(API.ModifyPwd, { ...params }, { ...options, withFailedMsg: true, })
 }
 /**
  * @description: 用户注销
  */
-export function Unregister(params = {}) {
-  return api.post(API.Unregister, { ...params })
+export function Unregister(params = {}, options = {}) {
+  return api.post(API.Unregister, { ...params }, { ...options, withFailedMsg: true, })
 }

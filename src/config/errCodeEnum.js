@@ -1,3 +1,5 @@
+import i18n from '@/language/index'
+
 // 请求错误枚举
 // TODO: 如果后续项目扩展，改装成TS
 export const ENUM_BAD_REQUEST = 400 // 请求不正确
@@ -19,7 +21,7 @@ export const ENUM_EMAIL_NO_EXIST = 103002 // 邮箱未注册
 export const ENUM_EMAIL_ILLEGAL = 103003 // 邮箱不合法
 export const ENUM_PASSWORD_NOT_STRONG = 103004 // 密码强度不够
 export const ENUM_EMAIL_TICKET_ERROR = 103005 // 邮箱验证码不正确
-export const ENUM_COUNTRY_NOT_MATCH = 103006 // 正确见data
+export const ENUM_COUNTRY_NOT_MATCH = 103006 // 国家码与数据区不匹配正确见data
 export const ENUM_OLD_PASSWORD_ERROR = 103007 // 旧密码不正确
 export const ENUM_PASSWORD_ERROR = 104001 // 用户名或密码错误
 export const ENUM_ACCOUNT_FORBIDDEN = 104002 // 此账号已被禁用
@@ -58,3 +60,91 @@ export const ERROR_CODE_ENUM = {
   104005: 'REFRESH_TOKEN_EXPIRE', // refreshToken不存在或已过期
   104006: 'PASSWORD_ERROR_TOO_MANY' // 密码错误次数过多
 }
+
+/**
+ * 错误信息枚举
+ * @param {String | Number} errCode 
+ * @returns {String} 多语言错误信息
+ */
+export const handleNetworkError = (errCode) => {
+  let errMessage = i18n.global.t('error.unknown_error')
+  if (errCode) {
+    switch (errCode) {
+      case 429:
+        errMessage = i18n.global.t('error.too_many_count')
+        break
+      case 'unknown':
+        errMessage = i18n.global.t('error.unknown_error')
+        break
+      case 400:
+      case 401:
+      case 501:
+      case 500:
+      case 503:
+      case 999:
+      case 103003:
+      case 103006:
+      case 104004:
+      case 104005:
+        errMessage = i18n.global.t('error.too_many_requests')
+        break
+      case 102001:
+        errMessage = i18n.global.t('error.captcha_error')
+        break
+      case 102002:
+      case 103005:
+        errMessage = i18n.global.t('error.email_verify_code_error')
+        break
+      case 103001:
+        errMessage = i18n.global.t('error.email_already_exist')
+        break
+      case 101001:
+      case 103002:
+        errMessage = i18n.global.t('error.email_no_exist')
+        break
+      case 103007:
+        errMessage = i18n.global.t('error.old_password_error')
+        break
+      case 104001:
+        errMessage = i18n.global.t('error.password_error')
+        break
+      case 104002:
+        errMessage = i18n.global.t('error.account_forbidden')
+        break
+      case 104003:
+        errMessage = i18n.global.t('error.account_unregister')
+        break
+      case 104004:
+        errMessage = i18n.global.t('error.temp_token_expire')
+        break
+      case 104006:
+        errMessage = i18n.global.t('error.password_error_too_many')
+        break
+
+      default:
+        console.log(errCode)
+        errMessage = i18n.global.t('error.unknown_error')
+    }
+  } else {
+    console.log(`没有该错误码：${errCode}`)
+    errMessage = i18n.global.t('error.unknown_error')
+  }
+  return errMessage
+}
+
+/**
+ * 授权相关错误处理函数
+ * @param {*} errno
+ * @returns
+ */
+// const handleAuthError = (errno) => {
+
+//   if (authErrMap.hasOwnProperty(errno)) {
+//     // 弹窗提示错误
+//     // 授权错误，登出账户
+//     return false
+//   }
+
+//   return true
+// }
+

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { deleteCookie, getToken, openVn } from '@/utils/methods.js'
 import { getOsType } from '@/utils/sys.js'
 import { ACCESS_TOKEN, BASE_URL, REFRESH_TOKEN } from '@/config/global.js'
-import { ENUM_ACCOUNT_FORBIDDEN, ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
+import { ENUM_ACCOUNT_FORBIDDEN, ERROR_CODE_ENUM, handleNetworkError } from '@/config/errCodeEnum.js'
 
 import { ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE } from '@/config/errCodeEnum'
 import { GET_IP_URL } from '@/api/global'
@@ -59,18 +59,15 @@ instance.interceptors.response.use(
     // * 提示信息
     const { withFailedMsg = false, withSuccessMsg } = config
     // 请求成功（与后端通信成功，但接口逻辑不一定正确，分别处理） && statusText === 'OK' ？？？
+    console.log(`%c>> 响应拦截器~~${config.url}`, 'color:yellow', response, data)
     const hasSuccess = status === 200 && data && Reflect.has(data, 'code')
     if (hasSuccess) {
-      // console.log(`响应拦截器~~${config.url}`, 'color:yellow', response, data)
       if (data.code === 200) {
-        // if (config.url === GET_IP_URL && data.data?.domain) {
-        //   setBaseURL(data.data.domain)
-        // }
         if (withSuccessMsg === true) {
           openVn({ msg: `${config.url}请求成功`, type: 'success' })
         }
       } else {
-        const errMsg = ERROR_CODE_ENUM[data.code]
+        const errMsg = handleNetworkError(data.code)
         // 104002 ACCOUNT_FORBIDDEN	此账号已被禁用 [清除登录状态，跳转登录]
         if([ENUM_ACCOUNT_FORBIDDEN].indexOf(data.code) > -1) {
           router.replace(`/login#${HASH_LOGIN}`)
@@ -78,7 +75,7 @@ instance.interceptors.response.use(
           deleteCookie(ACCESS_TOKEN)
           deleteCookie(REFRESH_TOKEN)
         }
-        if (withFailedMsg === true && errMsg) {
+        if (withFailedMsg === true) {
           // token过期重刷
           // 104004	TEMP_TOKEN_EXPIRE	临时token不存在或已过期
           // 104005	REFRESH_TOKEN_EXPIRE	refreshToken不存在或已过期
@@ -86,12 +83,11 @@ instance.interceptors.response.use(
           if ([ENUM_TEMP_TOKEN_EXPIRE, ENUM_REFRESH_TOKEN_EXPIRE].indexOf(data.code) > -1) {
             console.log(`%c>> $`, 'color:yellow', errMsg, '过期重刷')
           }
-          // console.log(errMsg)
           if (errMsg) {
             openVn({ msg: errMsg, type: 'error' })
           } else {
             console.log(`%c>> $未知错误`, 'color:yellow', config.url)
-            openVn({ msg: '未知错误', type: 'error' })
+            openVn({ msg: handleNetworkError('unknown'), type: 'error' })
           }
         }
       }
@@ -107,13 +103,4 @@ instance.interceptors.response.use(
   }
 )
 
-// 提供一个方法来设置 baseURL
-export function setBaseURL(domain) {
-  // console.log(`%c>> $`, 'color:yellow', domain)
-  // if(domain.indexOf('http') > -1) {
-  //   instance.defaults.baseURL = `${domain}`;
-  // } else {
-  //   instance.defaults.baseURL = `https//:${domain}`;
-  // }
-}
 export default instance

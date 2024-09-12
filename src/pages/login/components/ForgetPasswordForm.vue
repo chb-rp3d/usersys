@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted, onUnmounted } from 'vue'
+import { reactive, ref, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useIntervalFn } from '@vueuse/core'
@@ -54,6 +54,7 @@ import { useI18n } from 'vue-i18n'
 
 import { ResetPwd } from '@/api/user/index.js'
 import { REG_EMAIL, REG_PWD } from '@/config/reg'
+import { useGlobalStore } from '@/store/modules/global'
 
 import {
   handleGetEmailCode,
@@ -61,10 +62,10 @@ import {
   imgCaptcha,
   getImgCaptchaUrl
 } from '@/hooks/auth/useLoginForm'
-import { ERROR_CODE_ENUM } from '@/config/errCodeEnum'
 
 const emit = defineEmits(['change-form-type']);
 
+const GlobalStore = useGlobalStore()
 const { t } = useI18n()
 
 const forgetPwdFormRef = ref()
@@ -103,11 +104,11 @@ const forgetPwdFormRules = reactive({
     trigger: ['blur']
   },
   captchaCode: [
-    { required: true, message: t('global.placeholder', [t('login.label__img_code')]), trigger: 'blur' },
+    { required: true, message: () => t('global.placeholder', [t('login.label__img_code')]), trigger: 'blur' },
   ],
   ticketCode: [
-    { required: true, message: t('login.valid__ticket_require'), trigger: 'blur' },
-    { min: 6, max: 6, message: t('login.valid__ticket_length_6'), trigger: 'blur' }
+    { required: true, message: () => t('login.valid__ticket_require'), trigger: 'blur' },
+    { min: 6, max: 6, message: () => t('login.valid__ticket_length_6'), trigger: 'blur' }
   ],
 })
 
@@ -124,8 +125,13 @@ const _handleGetEmailCode = async () => {
       handleGetEmailCode(params)
     }
   })
-
 }
+
+watch(() => GlobalStore.lang, (newVal, oldVal) => {
+  if(newVal != oldVal) {
+    forgetPwdFormRef.value.resetFields()
+  }
+})
 
 // 忘记密码, 重置密码
 const handleRegisterByEmail = async () => {
@@ -141,11 +147,6 @@ const handleRegisterByEmail = async () => {
   if (code === 200) {
     openVn({ msg: t('login.toast__reset_password_success'), type: 'success' })
     emit('change-form-type', 'login')
-  } else {
-    const errMsg = ERROR_CODE_ENUM[code] || message
-    if (errMsg) {
-      openVn({ msg: errMsg, type: 'error' })
-    }
   }
 }
 

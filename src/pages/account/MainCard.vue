@@ -3,12 +3,12 @@
     <div v-for="(item, idx) in menuCfg" :key="item.id">
       <div @click="_handleCardType(item.type)"
         style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-        <div>{{ item.name }}</div>
+        <div>{{ item.name() }}</div>
         <el-icon>
           <ArrowRight />
         </el-icon>
       </div>
-      <ElDivider v-if="idx != menuCfg.length - 1" />
+      <el-divider v-if="idx != menuCfg.length - 1" />
     </div>
   </el-card>
 </template>
@@ -16,7 +16,6 @@
 <script setup>
 import { reactive, toRefs, onActivated } from "vue"
 import { useI18n } from 'vue-i18n'
-import { ElDivider } from "element-plus";
 import { ElMessageBox } from 'element-plus'
 import { REG_PWD } from "@/config/reg";
 import { handleDeleteAccountConform } from "@/hooks/auth/useLoginForm";
@@ -28,12 +27,12 @@ const { t } = useI18n()
 const menuCfg = [
   {
     id: 0,
-    name: t('account.change_password'),
+    name: () => t('account.change_password'),
     type: 'updatePwd'
   },
   {
     id: 1,
-    name: t('account.delete_account'),
+    name: () => t('account.delete_account'),
     type: 'delAccount'
   },
 ]

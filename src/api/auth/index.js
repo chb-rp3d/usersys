@@ -6,7 +6,6 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/config/global'
 import { getToken, openVn } from '@/utils/methods'
 import api from '@/utils/http.js'
 import { GetEmailDomain } from '../global/index.js'
-import { ERROR_CODE_ENUM } from '@/config/errCodeEnum.js'
 
 const API = {
   GetImgCaptcha: '/cloud-api/user/img-captcha',
@@ -35,7 +34,7 @@ export function GetEmailCode(params = {}, options = {}) {
  * @description: 用户注册
  */
 export function RegisterByEmail(params = {}, options = {}) {
-  return api.post(API.RegisterByEmail, { ...params }, { ...options, requireToken: false })
+  return api.post(API.RegisterByEmail, { ...params }, { ...options, withFailedMsg: true, requireToken: false })
 }
 /**
  * @description: 邮箱密码登录 [先获取 domain]
@@ -44,12 +43,8 @@ export async function LoginByEmail(params = {}, options = {}) {
   try {
     const { code, data } = await GetEmailDomain(params.email, { withFailedMsg: true })
     if (code === 200 && !!data) {
-      return api.post(API.LoginByEmail, { ...params }, { ...options, __baseURL: `https://${data.domain}`, requireToken: false })
+      return api.post(API.LoginByEmail, { ...params }, { ...options, __baseURL: `${location?.protocol || 'https:'}//${data.domain}`, requireToken: false })
     } else {
-      // const errMsg = ERROR_CODE_ENUM[code]
-      // if (errMsg) {
-      //   openVn({ msg: errMsg, type: 'error' })
-      // } 登录账号错误会出现两次提示
       return { code }
     }
   } catch (error) {
@@ -61,7 +56,7 @@ export async function LoginByEmail(params = {}, options = {}) {
  * @params {String} temporaryToken 临时凭证
  */
 export function LoginByToken(params = {}, options = {}) {
-  return api.post(API.LoginByToken, { ...params }, { ...options, requireToken: false })
+  return api.post(API.LoginByToken, { ...params }, { ...options, requireToken: false, withFailedMsg: true, })
 }
 
 /**
